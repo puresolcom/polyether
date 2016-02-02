@@ -1,0 +1,20 @@
+{
+    "name": "puresolcom/polyether",
+    "description": "EtherCMS Polyether",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mohammed Anwar",
+            "email": "m.anwar@pure-sol.com"
+        }
+    ],
+    "require": {
+        "bosnadev/repositories": "0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Polyether\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}

@@ -2,7 +2,7 @@
 
 namespace Polyether\Option;
 
-use Polyether\App\Repositories\OptionRepository;
+use Polyether\Option\Repositories\OptionRepository;
 use Illuminate\Database\Eloquent\Collection;
 
 class OptionAPI {

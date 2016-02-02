@@ -5,7 +5,7 @@ namespace Polyether\Taxonomy;
 use Polyether\App\Repositories\TermRepository;
 use Polyether\App\Repositories\TermTaxonomyRepository;
 use Polyether\App\Repositories\TermTaxonomyRelationshipsRepository;
-use Polyether\App\Libraries\EtherError;
+use Polyether\Support\EtherError;
 use Plugin;
 
 class Taxonomy {

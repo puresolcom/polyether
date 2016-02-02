@@ -2,9 +2,9 @@
 
 namespace Polyether\Meta;
 
-use Polyether\App\Repositories\UserMetaRepository;
-use Polyether\App\Repositories\PostMetaRepository;
-use Polyether\App\Libraries\EtherError;
+use Polyether\Meta\Repositories\UserMetaRepository;
+use Polyether\Meta\Repositories\PostMetaRepository;
+use Polyether\Support\EtherError;
 use Plugin;
 
 class MetaAPI {

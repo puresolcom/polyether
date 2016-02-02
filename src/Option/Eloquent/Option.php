@@ -1,6 +1,6 @@
 <?php
 
-namespace Etherbase\App\Models;
+namespace Polyether\Option\Eloquent;
 
 use Illuminate\Database\Eloquent\Model;
 

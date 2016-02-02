@@ -12,7 +12,7 @@ class MetaServiceProvider extends ServiceProvider {
 
     public function register() {
         $this->app->singleton('Meta', function($app) {
-            return new MetaAPI($app->make('Polyether\App\Repositories\UserMetaRepository'), $app->make('Polyether\App\Repositories\PostMetaRepository'));
+            return new MetaAPI($app->make('Polyether\Meta\Repositories\UserMetaRepository'), $app->make('Polyether\Meta\Repositories\PostMetaRepository'));
         });
     }
 

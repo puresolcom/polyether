@@ -6,14 +6,16 @@ use Illuminate\Support\ServiceProvider;
 
 class OptionServiceProvider extends ServiceProvider {
 
-    public function boot() {
-        
-    }
+    protected $defer = true;
 
     public function register() {
         $this->app->singleton('Option', function($app) {
-            return new OptionAPI($app->make('Polyether\App\Repositories\OptionRepository'));
+            return new OptionAPI($app->make('Polyether\Option\Repositories\OptionRepository'));
         });
+    }
+
+    public function provides() {
+        return ['Option'];
     }
 
 }

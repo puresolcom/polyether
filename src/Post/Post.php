@@ -2,8 +2,8 @@
 
 namespace Polyether\Post;
 
-use Polyether\App\Repositories\PostRepository;
-use Polyether\App\Libraries\EtherError;
+use Polyether\Post\Repositories\PostRepository;
+use Polyether\Support\EtherError;
 use Plugin;
 use Taxonomy;
 

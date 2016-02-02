@@ -1,13 +1,13 @@
 <?php
 
-namespace Etherbase\App\Repositories;
+namespace Polyether\Option\Repositories;
 
 use Bosnadev\Repositories\Eloquent\Repository;
 
 class OptionRepository extends Repository {
 
     public function model() {
-        return '\Etherbase\App\Models\Option';
+        return \Polyether\Option\Eloquent\Option::class;
     }
 
     public function updateOrCreate($attrs, $values) {

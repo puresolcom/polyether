@@ -1,6 +1,6 @@
 <?php
 
-namespace Polyether\Plugin\Middleware;
+namespace Polyether\Plugin\Http\Middleware;
 
 use Closure;
 

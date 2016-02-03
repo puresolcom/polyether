@@ -11,15 +11,11 @@ use Polyether\Support\Providers\ModuleServiceProvider;
  */
 class BackendServiceProvider extends ModuleServiceProvider {
 
-    public function boot() {
-        parent::boot();
-        $this->loadRoutes();
-    }
-
-    protected function loadRoutes() {
-        if (!$this->app->routesAreCached()) {
-            require __DIR__ . '/Http/routes.php';
-        }
+    protected function InitVars() {
+        $this->namespace = __NAMESPACE__;
+        $this->packagePath = __DIR__ . DIRECTORY_SEPARATOR;
+        $this->packageName = 'backend';
+        $this->configs = [];
     }
 
 }

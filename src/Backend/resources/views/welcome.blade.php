@@ -1,0 +1,2 @@
+@extends('backend::layouts.landing')
+

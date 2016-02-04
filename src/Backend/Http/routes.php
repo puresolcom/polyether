@@ -14,13 +14,8 @@ Route::group(['middleware' => ['web'], 'namespace' => 'Polyether\Backend\Http\Co
 // Password reset routes...
     Route::get('password/reset/{token}', ['as' => 'reset_password', 'uses' => 'Auth\PasswordController@getReset']);
     Route::post('password/reset', ['as' => 'reset_passwordPost', 'uses' => 'Auth\PasswordController@postReset']);
-
-    Route::group(['namespace' => 'Backend'], function() {
-
-        // Application routes...
-        // Site administration section
-        Route::group(['prefix' => 'admin'], function () {
-            
-        });
+    
+    Route::group(['prefix' => 'dashboard'], function(){
+        Route::get('/', ['as' => 'dashboardHome', 'uses'=> 'DashboardController@getIndex']);
     });
 });

@@ -15,7 +15,9 @@ class BackendServiceProvider extends ModuleServiceProvider {
         $this->namespace = __NAMESPACE__;
         $this->packagePath = __DIR__ . DIRECTORY_SEPARATOR;
         $this->packageName = 'backend';
-        $this->configs = [];
+        $this->configs = [
+            'auth' => 'auth',
+        ];
     }
-
+    
 }

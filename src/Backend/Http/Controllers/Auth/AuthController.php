@@ -129,7 +129,7 @@ use AuthenticatesAndRegistersUsers;
     public function getRegister() {
         $page_title = "Register";
 
-        return view('auth.register', compact('page_title'));
+        return view('backend::auth.register', compact('page_title'));
     }
 
 }

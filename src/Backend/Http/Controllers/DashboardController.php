@@ -1,6 +1,6 @@
 <?php
 
-namespace Polyether\Backend\Http\Controllers\Backend;
+namespace Polyether\Backend\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Etherbase\App\Http\Requests;
@@ -18,8 +18,8 @@ class DashboardController extends Controller {
         $this->middleware('auth');
     }
 
-    public function index() {
-        return view('backend.views.dashboard.index');
+    public function getIndex() {
+        return view('backend::home');
     }
 
 }

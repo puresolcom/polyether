@@ -12,16 +12,16 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     <title>Acacha AdminLTE Laravel package template Landing page - Using Pratt</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ asset('/css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/backend//css/bootstrap.css') }}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="{{ asset('/css/main.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/backend//css/main.css') }}" rel="stylesheet">
 
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
 
-    <script src="{{ asset('/plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
-    <script src="{{ asset('/js/smoothscroll.js') }}"></script>
+    <script src="{{ asset('vendor/backend//plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
+    <script src="{{ asset('vendor/backend//js/smoothscroll.js') }}"></script>
 
 
 </head>
@@ -73,14 +73,14 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
             <div class="col-lg-2">
                 <h5>Amazing admin template</h5>
                 <p>Based on adminlte bootstrap theme</p>
-                <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow1.png') }}">
+                <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('vendor/backend//img/arrow1.png') }}">
             </div>
             <div class="col-lg-8">
-                <img class="img-responsive" src="{{ asset('/img/app-bg.png') }}" alt="">
+                <img class="img-responsive" src="{{ asset('vendor/backend//img/app-bg.png') }}" alt="">
             </div>
             <div class="col-lg-2">
                 <br>
-                <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow2.png') }}">
+                <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('vendor/backend//img/arrow2.png') }}">
                 <h5>Awesome packaged...</h5>
                 <p>... by <a href="http://acacha.org/sergitur">Sergi Tur Badenas</a> at <a href="http://acacha.org">acacha.org</a> ready to use with Laravel!</p>
             </div>
@@ -98,17 +98,17 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
             <br>
             <br>
             <div class="col-lg-4">
-                <img src="{{ asset('/img/intro01.png') }}" alt="">
+                <img src="{{ asset('vendor/backend//img/intro01.png') }}" alt="">
                 <h3>Community</h3>
                 <p>See <a href="https://github.com/acacha/adminlte-laravel">Github project</a>, post <a href="https://github.com/acacha/adminlte-laravel/issues">issues</a> and <a href="https://github.com/acacha/adminlte-laravel/pulls">Pull requests</a></p>
             </div>
             <div class="col-lg-4">
-                <img src="{{ asset('/img/intro02.png') }}" alt="">
+                <img src="{{ asset('vendor/backend//img/intro02.png') }}" alt="">
                 <h3>Schedule</h3>
                 <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
             </div>
             <div class="col-lg-4">
-                <img src="{{ asset('/img/intro03.png') }}" alt="">
+                <img src="{{ asset('vendor/backend//img/intro03.png') }}" alt="">
                 <h3>Monitoring</h3>
                 <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
             </div>
@@ -126,7 +126,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
             <br>
             <br>
             <div class="col-lg-6 centered">
-                <img class="centered" src="{{ asset('/img/mobile.png') }}" alt="">
+                <img class="centered" src="{{ asset('vendor/backend//img/mobile.png') }}" alt="">
             </div>
 
             <div class="col-lg-6">
@@ -213,10 +213,10 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner">
                         <div class="item active">
-                            <img src="{{ asset('/img/item-01.png') }}" alt="">
+                            <img src="{{ asset('vendor/backend//img/item-01.png') }}" alt="">
                         </div>
                         <div class="item">
-                            <img src="{{ asset('/img/item-02.png') }}" alt="">
+                            <img src="{{ asset('vendor/backend//img/item-02.png') }}" alt="">
                         </div>
                     </div>
                 </div>
@@ -282,7 +282,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="{{ asset('/js/bootstrap.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('vendor/backend//js/bootstrap.min.js') }}" type="text/javascript"></script>
 <script>
     $('.carousel').carousel({
         interval: 3500

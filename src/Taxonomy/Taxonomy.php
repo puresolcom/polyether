@@ -2,9 +2,9 @@
 
 namespace Polyether\Taxonomy;
 
-use Polyether\App\Repositories\TermRepository;
-use Polyether\App\Repositories\TermTaxonomyRepository;
-use Polyether\App\Repositories\TermTaxonomyRelationshipsRepository;
+use Polyether\Taxonomy\Repositories\TermRepository;
+use Polyether\Taxonomy\Repositories\TermTaxonomyRepository;
+use Polyether\Taxonomy\Repositories\TermTaxonomyRelationshipsRepository;
 use Polyether\Support\EtherError;
 use Plugin;
 

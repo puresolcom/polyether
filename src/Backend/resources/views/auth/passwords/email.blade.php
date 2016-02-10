@@ -6,7 +6,7 @@
 
 @section('content')
 
-<body class="login-page">
+    <body class="login-page">
     <div class="login-box">
         <div class="login-logo">
             <a href="{{ url('/home') }}"><b>Admin</b>LTE</a>
@@ -34,7 +34,8 @@
             <form action="{{ url('/password/email') }}" method="post">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <div class="form-group has-feedback">
-                    <input type="email" class="form-control" placeholder="Email" name="email" value="{{ old('email') }}"/>
+                    <input type="email" class="form-control" placeholder="Email" name="email"
+                           value="{{ old('email') }}"/>
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                 </div>
 
@@ -42,7 +43,8 @@
                     <div class="col-xs-2">
                     </div><!-- /.col -->
                     <div class="col-xs-8">
-                        <button type="submit" class="btn btn-primary btn-block btn-flat">Send Password Reset Link</button>
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Send Password Reset Link
+                        </button>
                     </div><!-- /.col -->
                     <div class="col-xs-2">
                     </div><!-- /.col -->
@@ -67,6 +69,6 @@
             });
         });
     </script>
-</body>
+    </body>
 
 @endsection

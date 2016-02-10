@@ -2,13 +2,11 @@
 
 namespace Polyether\Backend\Http\Controllers\Auth;
 
-use Polyether\Backend\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
-use Illuminate\Mail\Message;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Http\Request;
+use Polyether\Backend\Http\Controllers\Controller;
 
-class PasswordController extends Controller {
+class PasswordController extends Controller
+{
 
     /*
       |--------------------------------------------------------------------------
@@ -21,14 +19,15 @@ class PasswordController extends Controller {
       |
      */
 
-use ResetsPasswords;
+    use ResetsPasswords;
 
     /**
      * Create a new password controller instance.
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct ()
+    {
         $this->middleware('guest');
     }
 
@@ -37,7 +36,8 @@ use ResetsPasswords;
      *
      * @return \Illuminate\Http\Response
      */
-    public function getEmail() {
+    public function getEmail ()
+    {
         $page_title = "Recover password";
 
         return view('backend::auth.passwords.email', compact('page_title'));

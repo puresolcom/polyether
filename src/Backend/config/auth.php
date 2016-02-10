@@ -13,8 +13,8 @@ return [
       |
      */
 
-    'defaults' => [
-        'guard' => 'web',
+    'defaults'  => [
+        'guard'     => 'web',
         'passwords' => 'users',
     ],
     /*
@@ -33,13 +33,13 @@ return [
       | Supported: "session", "token"
       |
      */
-    'guards' => [
+    'guards'    => [
         'web' => [
-            'driver' => 'session',
+            'driver'   => 'session',
             'provider' => 'users',
         ],
         'api' => [
-            'driver' => 'token',
+            'driver'   => 'token',
             'provider' => 'users',
         ],
     ],
@@ -62,12 +62,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model'  => App\User::class,
         ],
-    // 'users' => [
-    //     'driver' => 'database',
-    //     'table' => 'users',
-    // ],
+        // 'users' => [
+        //     'driver' => 'database',
+        //     'table' => 'users',
+        // ],
     ],
     /*
       |--------------------------------------------------------------------------
@@ -90,9 +90,9 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'email' => 'backend::auth.emails.password',
-            'table' => 'password_resets',
-            'expire' => 60,
+            'email'    => 'backend::auth.emails.password',
+            'table'    => 'password_resets',
+            'expire'   => 60,
         ],
     ],
 ];

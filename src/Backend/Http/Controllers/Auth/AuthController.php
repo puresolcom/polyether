@@ -2,16 +2,17 @@
 
 namespace Polyether\Backend\Http\Controllers\Auth;
 
+use Auth;
+use Etherbase\App\Repositories\AuditRepository as Audit;
 use Etherbase\App\User;
-use Validator;
-use Polyether\Backend\Http\Controllers\Controller;
+use Flash;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
-use Auth;
-use Flash;
-use Etherbase\App\Repositories\AuditRepository as Audit;
+use Polyether\Backend\Http\Controllers\Controller;
+use Validator;
 
-class AuthController extends Controller {
+class AuthController extends Controller
+{
     /*
       |--------------------------------------------------------------------------
       | Registration & Login Controller
@@ -23,46 +24,51 @@ class AuthController extends Controller {
       |
      */
 
-use AuthenticatesAndRegistersUsers;
+    use AuthenticatesAndRegistersUsers;
 
     /**
      * Create a new authentication controller instance.
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct ()
+    {
         $this->middleware('guest', ['except' => 'getLogout']);
     }
 
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param  array $data
+     *
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data) {
+    protected function validator (array $data)
+    {
         return Validator::make($data, [
-                    'first_name' => 'required|min:3|max:255',
-                    'last_name' => 'required|min:3|max:255',
-                    'username' => 'required|min:3|max:255',
-                    'email' => 'required|email|max:255|unique:users',
-                    'password' => 'required|confirmed|min:6',
+            'first_name' => 'required|min:3|max:255',
+            'last_name'  => 'required|min:3|max:255',
+            'username'   => 'required|min:3|max:255',
+            'email'      => 'required|email|max:255|unique:users',
+            'password'   => 'required|confirmed|min:6',
         ]);
     }
 
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param  array $data
+     *
      * @return User
      */
-    protected function create(array $data) {
+    protected function create (array $data)
+    {
         $user = User::create([
-                    'first_name' => $data['first_name'],
-                    'last_name' => $data['last_name'],
-                    'username' => $data['username'],
-                    'email' => $data['email'],
-                    'password' => bcrypt($data['password']),
+            'first_name' => $data[ 'first_name' ],
+            'last_name'  => $data[ 'last_name' ],
+            'username'   => $data[ 'username' ],
+            'email'      => $data[ 'email' ],
+            'password'   => bcrypt($data[ 'password' ]),
         ]);
 
         Flash::success("Welcome" . $user->first_name . ", your user has been created");
@@ -73,10 +79,12 @@ use AuthenticatesAndRegistersUsers;
     /**
      * Handle a login request to the application.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
-    public function postLogin(Request $request) {
+    public function postLogin (Request $request)
+    {
 
         $this->validate($request, [
             'username' => 'required|min:3|max:255',
@@ -95,15 +103,15 @@ use AuthenticatesAndRegistersUsers;
             } else {
                 Auth::logout();
                 return redirect(route('login'))
-                                ->withInput($request->only('username', 'remember'))
-                                ->withErrors([
-                                    'username' => 'Unable to login using the login credentials provided',
-                ]);
+                    ->withInput($request->only('username', 'remember'))
+                    ->withErrors([
+                        'username' => 'Unable to login using the login credentials provided',
+                    ]);
             }
         }
         return redirect($this->loginPath())
-                        ->withInput($request->only('username', 'remember'))
-                        ->withErrors($this->getFailedLoginMessage());
+            ->withInput($request->only('username', 'remember'))
+            ->withErrors($this->getFailedLoginMessage());
     }
 
     /**
@@ -111,7 +119,8 @@ use AuthenticatesAndRegistersUsers;
      *
      * @return \Illuminate\Http\Response
      */
-    public function getLogin() {
+    public function getLogin ()
+    {
 
         if (null !== Auth::user())
             return redirect()->intended($this->redirectPath());
@@ -126,7 +135,8 @@ use AuthenticatesAndRegistersUsers;
      *
      * @return \Illuminate\Http\Response
      */
-    public function getRegister() {
+    public function getRegister ()
+    {
         $page_title = "Register";
 
         return view('backend::auth.register', compact('page_title'));

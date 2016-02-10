@@ -6,10 +6,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <html lang="en">
 
 @section('htmlheader')
-    @include('backend::layouts.partials.htmlheader')
+@include('backend::layouts.partials.htmlheader')
 @show
 
-<!--
+        <!--
 BODY TAG OPTIONS:
 =================
 Apply one or more of the following classes to get the
@@ -36,12 +36,12 @@ desired effect
 
     @include('backend::layouts.partials.sidebar')
 
-    <!-- Content Wrapper. Contains page content -->
+            <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
 
         @include('backend::layouts.partials.contentheader')
 
-        <!-- Main content -->
+                <!-- Main content -->
         <section class="content">
             <!-- Your Page Content Here -->
             @yield('main-content')

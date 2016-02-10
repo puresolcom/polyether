@@ -17,7 +17,8 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     <!-- Custom styles for this template -->
     <link href="{{ asset('vendor/backend//css/main.css') }}" rel="stylesheet">
 
-    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet'
+          type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
 
     <script src="{{ asset('vendor/backend//plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
@@ -67,7 +68,8 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                 <h1>Acacha <b><a href="https://github.com/acacha/adminlte-laravel">adminlte-laravel</a></b></h1>
                 <h3>A <a href="https://laravel.com/">Laravel</a> 5 package that switchs default Laravel
                     scaffolding/boilerplate to <a href="https://almsaeedstudio.com/preview">AdminLTE</a> template with
-                    <a href="http://getbootstrap.com/">Bootstrap</a> 3.0 and <a href="http://blacktie.co/demo/pratt/">Pratt</a> Landing page</h3>
+                    <a href="http://getbootstrap.com/">Bootstrap</a> 3.0 and <a href="http://blacktie.co/demo/pratt/">Pratt</a>
+                    Landing page</h3>
                 <h3><a href="{{ url('/register') }}" class="btn btn-lg btn-success">Get Started!</a></h3>
             </div>
             <div class="col-lg-2">
@@ -82,7 +84,8 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                 <br>
                 <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('vendor/backend//img/arrow2.png') }}">
                 <h5>Awesome packaged...</h5>
-                <p>... by <a href="http://acacha.org/sergitur">Sergi Tur Badenas</a> at <a href="http://acacha.org">acacha.org</a> ready to use with Laravel!</p>
+                <p>... by <a href="http://acacha.org/sergitur">Sergi Tur Badenas</a> at <a href="http://acacha.org">acacha.org</a>
+                    ready to use with Laravel!</p>
             </div>
         </div>
     </div> <!--/ .container -->
@@ -100,7 +103,9 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
             <div class="col-lg-4">
                 <img src="{{ asset('vendor/backend//img/intro01.png') }}" alt="">
                 <h3>Community</h3>
-                <p>See <a href="https://github.com/acacha/adminlte-laravel">Github project</a>, post <a href="https://github.com/acacha/adminlte-laravel/issues">issues</a> and <a href="https://github.com/acacha/adminlte-laravel/pulls">Pull requests</a></p>
+                <p>See <a href="https://github.com/acacha/adminlte-laravel">Github project</a>, post <a
+                            href="https://github.com/acacha/adminlte-laravel/issues">issues</a> and <a
+                            href="https://github.com/acacha/adminlte-laravel/pulls">Pull requests</a></p>
             </div>
             <div class="col-lg-4">
                 <img src="{{ asset('vendor/backend//img/intro02.png') }}" alt="">
@@ -136,13 +141,18 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                 <div class="accordion ac" id="accordion2">
                     <div class="accordion-group">
                         <div class="accordion-heading">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                               href="#collapseOne">
                                 First Class Design
                             </a>
                         </div><!-- /accordion-heading -->
                         <div id="collapseOne" class="accordion-body collapse in">
                             <div class="accordion-inner">
-                                <p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                                <p>It has survived not only five centuries, but also the leap into electronic
+                                    typesetting, remaining essentially unchanged. It was popularised in the 1960s with
+                                    the release of Letraset sheets containing Lorem Ipsum passages, and more recently
+                                    with desktop publishing software like Aldus PageMaker including versions of Lorem
+                                    Ipsum.</p>
                             </div><!-- /accordion-inner -->
                         </div><!-- /collapse -->
                     </div><!-- /accordion-group -->
@@ -150,13 +160,18 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
 
                     <div class="accordion-group">
                         <div class="accordion-heading">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                               href="#collapseTwo">
                                 Retina Ready Theme
                             </a>
                         </div>
                         <div id="collapseTwo" class="accordion-body collapse">
                             <div class="accordion-inner">
-                                <p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                                <p>It has survived not only five centuries, but also the leap into electronic
+                                    typesetting, remaining essentially unchanged. It was popularised in the 1960s with
+                                    the release of Letraset sheets containing Lorem Ipsum passages, and more recently
+                                    with desktop publishing software like Aldus PageMaker including versions of Lorem
+                                    Ipsum.</p>
                             </div><!-- /accordion-inner -->
                         </div><!-- /collapse -->
                     </div><!-- /accordion-group -->
@@ -164,13 +179,18 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
 
                     <div class="accordion-group">
                         <div class="accordion-heading">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                               href="#collapseThree">
                                 Awesome Support
                             </a>
                         </div>
                         <div id="collapseThree" class="accordion-body collapse">
                             <div class="accordion-inner">
-                                <p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                                <p>It has survived not only five centuries, but also the leap into electronic
+                                    typesetting, remaining essentially unchanged. It was popularised in the 1960s with
+                                    the release of Letraset sheets containing Lorem Ipsum passages, and more recently
+                                    with desktop publishing software like Aldus PageMaker including versions of Lorem
+                                    Ipsum.</p>
                             </div><!-- /accordion-inner -->
                         </div><!-- /collapse -->
                     </div><!-- /accordion-group -->
@@ -178,13 +198,18 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
 
                     <div class="accordion-group">
                         <div class="accordion-heading">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseFour">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                               href="#collapseFour">
                                 Responsive Design
                             </a>
                         </div>
                         <div id="collapseFour" class="accordion-body collapse">
                             <div class="accordion-inner">
-                                <p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                                <p>It has survived not only five centuries, but also the leap into electronic
+                                    typesetting, remaining essentially unchanged. It was popularised in the 1960s with
+                                    the release of Letraset sheets containing Lorem Ipsum passages, and more recently
+                                    with desktop publishing software like Aldus PageMaker including versions of Lorem
+                                    Ipsum.</p>
                             </div><!-- /accordion-inner -->
                         </div><!-- /collapse -->
                     </div><!-- /accordion-group -->
@@ -267,12 +292,15 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
 <div id="c">
     <div class="container">
         <p>
-            <a href="https://github.com/acacha/adminlte-laravel"></a><b>admin-lte-laravel</b></a>. A Laravel 5 package that switchs default Laravel scaffolding/boilerplate to AdminLTE template.<br/>
-            <strong>Copyright &copy; 2015 <a href="http://acacha.org">Acacha.org</a>.</strong> Created by <a href="http://acacha.org/sergitur">Sergi Tur Badenas</a>. See code at <a href="https://github.com/acacha/adminlte-laravel">Github</a>
+            <a href="https://github.com/acacha/adminlte-laravel"></a><b>admin-lte-laravel</b></a>. A Laravel 5 package
+            that switchs default Laravel scaffolding/boilerplate to AdminLTE template.<br/>
+            <strong>Copyright &copy; 2015 <a href="http://acacha.org">Acacha.org</a>.</strong> Created by <a
+                    href="http://acacha.org/sergitur">Sergi Tur Badenas</a>. See code at <a
+                    href="https://github.com/acacha/adminlte-laravel">Github</a>
             <br/>
             AdminLTE created by Abdullah Almsaeed <a href="https://almsaeedstudio.com/">almsaeedstudio.com</a>
             <br/>
-             Pratt Landing Page Created by <a href="http://www.blacktie.co">BLACKTIE.CO</a>
+            Pratt Landing Page Created by <a href="http://www.blacktie.co">BLACKTIE.CO</a>
         </p>
 
     </div>

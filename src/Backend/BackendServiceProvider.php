@@ -9,9 +9,11 @@ use Polyether\Support\Providers\ModuleServiceProvider;
  *
  * @author Mohammed Anwar <m.anwar@pure-sol.com>
  */
-class BackendServiceProvider extends ModuleServiceProvider {
+class BackendServiceProvider extends ModuleServiceProvider
+{
 
-    protected function InitVars() {
+    protected function InitVars ()
+    {
         $this->namespace = __NAMESPACE__;
         $this->packagePath = __DIR__ . DIRECTORY_SEPARATOR;
         $this->packageName = 'backend';
@@ -19,5 +21,5 @@ class BackendServiceProvider extends ModuleServiceProvider {
             'auth' => 'auth',
         ];
     }
-    
+
 }

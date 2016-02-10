@@ -4,9 +4,11 @@ namespace Polyether\Meta\Repositories;
 
 use Bosnadev\Repositories\Eloquent\Repository;
 
-class UserMetaRepository extends Repository {
+class UserMetaRepository extends Repository
+{
 
-    public function model() {
+    public function model ()
+    {
         \Polyether\Meta\Models\UserMeta::class;
     }
 

@@ -9,7 +9,8 @@ use Illuminate\Support\ServiceProvider;
  *
  * @author Mohammed Anwar <m.anwar@pure-sol.com>
  */
-abstract class ModuleServiceProvider extends ServiceProvider {
+abstract class ModuleServiceProvider extends ServiceProvider
+{
 
     protected $namespace;
     protected $packageName;
@@ -18,22 +19,22 @@ abstract class ModuleServiceProvider extends ServiceProvider {
     protected $middleware = [];
     protected $routeMiddleware = [];
 
-    public function boot() {
+    public function boot ()
+    {
         $this->registerMiddleware();
         $this->loadRoutes();
         $this->registerBootComponents();
         $this->registerComponents();
     }
 
-    protected abstract function InitVars();
-
-    protected function registerMiddleware() {
+    protected function registerMiddleware ()
+    {
 
         // Register middleware
 
-        $router = $this->app[\Illuminate\Routing\Router::class];
+        $router = $this->app[ \Illuminate\Routing\Router::class ];
 
-        $httpKernel = $this->app[\Illuminate\Contracts\Http\Kernel::class];
+        $httpKernel = $this->app[ \Illuminate\Contracts\Http\Kernel::class ];
         foreach ($this->middleware as $middleware) {
             $httpKernel->pushMiddleware($middleware);
         }
@@ -43,7 +44,8 @@ abstract class ModuleServiceProvider extends ServiceProvider {
         }
     }
 
-    protected function loadRoutes() {
+    protected function loadRoutes ()
+    {
         $routesPath = $this->packagePath . '/Http/routes.php';
         if (!$this->app->routesAreCached()) {
             if (file_exists($routesPath))
@@ -51,14 +53,16 @@ abstract class ModuleServiceProvider extends ServiceProvider {
         }
     }
 
-    protected function registerBootComponents() {
+    protected function registerBootComponents ()
+    {
         $this->publishConfig();
         $this->registerViews();
         $this->registerTranslations();
         $this->publishAssets();
     }
 
-    protected function publishConfig() {
+    protected function publishConfig ()
+    {
         foreach ($this->configs as $config => $alias) {
 
             $this->publishes([
@@ -67,7 +71,8 @@ abstract class ModuleServiceProvider extends ServiceProvider {
         }
     }
 
-    protected function registerViews() {
+    protected function registerViews ()
+    {
         $this->loadViewsFrom($this->packagePath . 'resources/views', $this->packageName);
 
         $this->publishes([
@@ -75,7 +80,8 @@ abstract class ModuleServiceProvider extends ServiceProvider {
         ]);
     }
 
-    protected function registerTranslations() {
+    protected function registerTranslations ()
+    {
         $this->loadTranslationsFrom($this->packagePath . 'resources/lang', $this->packageName);
 
         $this->publishes([
@@ -83,30 +89,36 @@ abstract class ModuleServiceProvider extends ServiceProvider {
         ]);
     }
 
-    protected function publishAssets() {
+    protected function publishAssets ()
+    {
         $this->publishes([
             $this->packagePath . 'public' => public_path('vendor/' . $this->packageName),
-                ], 'public');
+        ], 'public');
         $this->publishes([
             $this->packagePath . 'resources' => resource_path('vendor/' . $this->packageName),
         ]);
     }
 
-    protected function registerComponents() {
+    protected function registerComponents ()
+    {
         $this->registerConfig();
     }
 
-    protected function registerConfig() {
+    protected function registerConfig ()
+    {
         foreach ($this->configs as $config => $alias) {
             $this->mergeConfigFrom(
-                    $this->packagePath . 'config/' . $config . '.php', $alias
+                $this->packagePath . 'config/' . $config . '.php', $alias
             );
         }
     }
 
-    public function register() {
+    public function register ()
+    {
         $this->InitVars();
         $this->registerComponents();
     }
+
+    protected abstract function InitVars ();
 
 }

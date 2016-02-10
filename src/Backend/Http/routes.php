@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['middleware' => ['web'], 'namespace' => 'Polyether\Backend\Http\Controllers'], function() {
+Route::group(['middleware' => ['web'], 'namespace' => 'Polyether\Backend\Http\Controllers'], function () {
     // Authentication routes...
     Route::get('auth/login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
     Route::post('auth/login', ['as' => 'loginPost', 'uses' => 'Auth\AuthController@postLogin']);
@@ -14,8 +14,8 @@ Route::group(['middleware' => ['web'], 'namespace' => 'Polyether\Backend\Http\Co
 // Password reset routes...
     Route::get('password/reset/{token}', ['as' => 'reset_password', 'uses' => 'Auth\PasswordController@getReset']);
     Route::post('password/reset', ['as' => 'reset_passwordPost', 'uses' => 'Auth\PasswordController@postReset']);
-    
-    Route::group(['prefix' => 'dashboard'], function(){
-        Route::get('/', ['as' => 'dashboardHome', 'uses'=> 'DashboardController@getIndex']);
+
+    Route::group(['prefix' => 'dashboard'], function () {
+        Route::get('/', ['as' => 'dashboardHome', 'uses' => 'DashboardController@getIndex']);
     });
 });

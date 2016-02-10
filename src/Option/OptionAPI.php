@@ -2,39 +2,43 @@
 
 namespace Polyether\Option;
 
-use Polyether\Option\Repositories\OptionRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Polyether\Option\Repositories\OptionRepository;
 
-class OptionAPI {
+class OptionAPI
+{
 
     protected $option;
     protected $autoload = [];
     protected $cached = [];
     protected $notoption = [];
 
-    public function __construct(OptionRepository $option) {
+    public function __construct (OptionRepository $option)
+    {
         $this->option = $option;
         $this->autoloadOptions();
     }
 
-    public function autoloadOptions() {
+    public function autoloadOptions ()
+    {
         $options = $this->option->findWhere(['autoload' => 'yes'], ['option_name', 'option_value']);
 
         if ($options instanceof Collection) {
             foreach ($options as $option) {
-                $this->autoload[$option->option_name] = $option->option_value;
+                $this->autoload[ $option->option_name ] = $option->option_value;
             }
         }
     }
 
-    public function getOption($name) {
+    public function get ($name)
+    {
 
-        if (isset($this->notoption[$name])) {
+        if (isset($this->notoption[ $name ])) {
             return false;
         }
 
-        if (isset($this->autoload[$name])) {
-            $value = $this->autoload[$name];
+        if (isset($this->autoload[ $name ])) {
+            $value = $this->autoload[ $name ];
         } else if (FALSE !== ($cachedOption = $this->getCached($name))) {
             $value = $cachedOption;
         } else {
@@ -44,7 +48,7 @@ class OptionAPI {
                 $value = $query->option_value;
                 $this->cache($name, $value);
             } else {
-                $this->notoption[$name] = true;
+                $this->notoption[ $name ] = true;
                 return false;
             }
         }
@@ -55,7 +59,23 @@ class OptionAPI {
         return $value;
     }
 
-    public function setOption($name, $value, $autoload = 'yes') {
+    protected function getCached ($name)
+    {
+        return isset($this->cached[ $name ]) ? $this->cached[ $name ] : false;
+    }
+
+    protected function cache ($name, $value)
+    {
+        $this->cached[ $name ] = $value;
+    }
+
+    public function isJSON ($string)
+    {
+        return is_string($string) && is_array(json_decode($string, true)) && (json_last_error() == JSON_ERROR_NONE) ? true : false;
+    }
+
+    public function set ($name, $value, $autoload = 'yes')
+    {
 
         if (true === $autoload)
             $autoload = 'yes';
@@ -71,7 +91,8 @@ class OptionAPI {
         return FALSE;
     }
 
-    public function updateOption($name, $value, $autoload = null) {
+    public function update ($name, $value, $autoload = null)
+    {
 
         if (true === $autoload)
             $autoload = 'yes';
@@ -86,23 +107,11 @@ class OptionAPI {
         $updated_options = ['option_name' => $name, 'option_value' => $value];
 
         if ($autoload !== null)
-            $updated_options['autoload'] = $autoload;
+            $updated_options[ 'autoload' ] = $autoload;
 
         if ($this->option->updateOrCreate(['option_name' => $name], $updated_options))
             return TRUE;
         return FALSE;
-    }
-
-    public function isJSON($string) {
-        return is_string($string) && is_array(json_decode($string, true)) && (json_last_error() == JSON_ERROR_NONE) ? true : false;
-    }
-
-    protected function cache($name, $value) {
-        $this->cached[$name] = $value;
-    }
-
-    protected function getCached($name) {
-        return isset($this->cached[$name]) ? $this->cached[$name] : false;
     }
 
 }

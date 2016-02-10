@@ -4,9 +4,11 @@ namespace Polyether\Taxonomy\Repositories;
 
 use Bosnadev\Repositories\Eloquent\Repository;
 
-class TermTaxonomyRepository extends Repository {
+class TermTaxonomyRepository extends Repository
+{
 
-    public function model() {
+    public function model ()
+    {
         return \Polyether\Taxonomy\Models\TermTaxonomy::class;
     }
 

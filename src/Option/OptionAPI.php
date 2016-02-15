@@ -2,6 +2,7 @@
 
 namespace Polyether\Option;
 
+use Cache;
 use Illuminate\Database\Eloquent\Collection;
 use Polyether\Option\Repositories\OptionRepository;
 
@@ -30,25 +31,33 @@ class OptionAPI
         }
     }
 
-    public function get ($name)
+    public function get ($name, $default = false)
     {
-
         if (isset($this->notoption[ $name ])) {
+            if ($default)
+                return $default;
             return false;
         }
+
+        $cache_key = md5('option_' . $name);
 
         if (isset($this->autoload[ $name ])) {
             $value = $this->autoload[ $name ];
         } else if (FALSE !== ($cachedOption = $this->getCached($name))) {
             $value = $cachedOption;
+        } else if (Cache::has($cache_key)) {
+            $value = Cache::get($cache_key);
         } else {
             $query = $this->option->findBy('option_name', $name);
 
             if ($query) {
                 $value = $query->option_value;
                 $this->cache($name, $value);
+                Cache::put($cache_key, $value, $this->get('options_cache_expires', 60));
             } else {
                 $this->notoption[ $name ] = true;
+                if ($default)
+                    return $default;
                 return false;
             }
         }

@@ -2,7 +2,7 @@
 
 namespace Polyether\Option\Repositories;
 
-use Bosnadev\Repositories\Eloquent\Repository;
+use Polyether\Support\EloquentRepository as Repository;
 
 class OptionRepository extends Repository
 {

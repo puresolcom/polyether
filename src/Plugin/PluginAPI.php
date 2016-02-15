@@ -174,7 +174,7 @@ class PluginAPI
         if (isset($this->filter[ 'all' ])) {
             $this->current_filter[] = $tag;
             $all_args = func_get_args();
-            _call_all_hook($all_args);
+            $this->_call_all_hook($all_args);
         }
 
         if (!isset($this->filter[ $tag ])) {

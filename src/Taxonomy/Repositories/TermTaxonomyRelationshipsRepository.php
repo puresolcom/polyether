@@ -2,7 +2,7 @@
 
 namespace Polyether\Taxonomy\Repositories;
 
-use Bosnadev\Repositories\Eloquent\Repository;
+use Polyether\Support\EloquentRepository as Repository;
 
 class TermTaxonomyRelationshipsRepository extends Repository
 {

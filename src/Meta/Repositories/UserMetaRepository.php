@@ -2,7 +2,7 @@
 
 namespace Polyether\Meta\Repositories;
 
-use Bosnadev\Repositories\Eloquent\Repository;
+use Polyether\Support\EloquentRepository as Repository;
 
 class UserMetaRepository extends Repository
 {

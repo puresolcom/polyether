@@ -2,14 +2,17 @@
 
 namespace Polyether\Taxonomy;
 
+use Cache;
 use Polyether\Support\EtherError;
-use Polyether\Taxonomy\Models\TermTaxonomy;
+use Polyether\Support\Traits\CacheHelperTrait;
 use Polyether\Taxonomy\Repositories\TermRepository;
 use Polyether\Taxonomy\Repositories\TermTaxonomyRelationshipsRepository;
 use Polyether\Taxonomy\Repositories\TermTaxonomyRepository;
 
 class Taxonomy
 {
+
+    use CacheHelperTrait;
 
     protected $termRepository;
     protected $termTaxonomyRepository;
@@ -143,13 +146,14 @@ class Taxonomy
             if (!$this->termNotAssignedToAnyTaxonomy($term)) {
                 return new EtherError('Term id already assigned to taxonomy');
             } else {
-                if (($result = $this->termTaxonomyRepository->create([
+                $result = $this->termTaxonomyRepository->create([
                     'term_id'     => (int)$term,
                     'taxonomy'    => $taxonomy,
                     'description' => $args[ 'description' ],
                     'parent'      => $args[ 'parent' ]
-                ]))
-                ) {
+                ]);
+                if ($result) {
+                    $this->flushCache();
                     return $result;
                 } else {
                     return false;
@@ -177,21 +181,22 @@ class Taxonomy
                     if ($termWithTaxonomyFound) {
                         $slug = $this->termRepository->sluggable($slug, 'slug');
                     }
-
-                    if (($createdTerm = $this->termRepository->create([
+                    $createdTerm = $this->termRepository->create([
                         'name' => $term,
                         'slug' => $slug
-                    ]))
-                    ) {
+                    ]);
+                    if ($createdTerm) {
 
-                        if (($result = $this->termTaxonomyRepository->create([
+                        $result = $this->termTaxonomyRepository->create([
                             'term_id'     => (int)$createdTerm->id,
                             'taxonomy'    => $taxonomy,
                             'description' => $args[ 'description' ],
                             'parent'      => $args[ 'parent' ]
-                        ]))
-                        )
+                        ]);
+                        if ($result) {
+                            $this->flushCache();
                             return $result;
+                        }
 
                         return false;
                     } else {
@@ -287,73 +292,91 @@ class Taxonomy
 
         $args = array_merge($defaults, $args);
 
-        $taxonomy = $args[ 'taxonomy' ];
-        $isHierarchical = $args[ 'hierarchical' ];
-        $showOptionsAll = $args[ 'show_options_all' ];
-        $showOptionNone = $args[ 'show_option_none' ];
-        $optionNoneValue = $args[ 'option_none_value' ];
-        $withPostCounts = $args[ 'with_post_counts' ];
-        $echo = $args[ 'echo' ];
-        $selectName = $args[ 'name' ];
-        $selectId = $args[ 'id' ];
-        $selectClass = $args[ 'class' ];
-        $selectedValue = $args[ 'selected' ];
-        $valueField = $args[ 'value_field' ];
+        $cache_key = $this->setCacheKey('dropdown_terms_' . md5(http_build_query($args)));
 
-        if ($isHierarchical) {
-            $taxonomyTerms = $this->getHierarchicalTerms($taxonomy, null, $args);
+        if (Cache::has($cache_key)) {
+            $output = Cache::get($cache_key);
         } else {
-            $taxonomyTerms = $this->getTermsByTaxonomy($taxonomy, $args);
-        }
+            $taxonomy = $args[ 'taxonomy' ];
+            $isHierarchical = $args[ 'hierarchical' ];
+            $showOptionsAll = $args[ 'show_options_all' ];
+            $showOptionNone = $args[ 'show_option_none' ];
+            $optionNoneValue = $args[ 'option_none_value' ];
+            $withPostCounts = $args[ 'with_post_counts' ];
+            $echo = $args[ 'echo' ];
+            $selectName = $args[ 'name' ];
+            $selectId = $args[ 'id' ];
+            $selectClass = $args[ 'class' ];
+            $selectedValue = $args[ 'selected' ];
+            $valueField = $args[ 'value_field' ];
 
-        $output = "<select id=\"{$selectId}\" name=\"{$selectName}\" class=\"{$selectClass}\">";
-
-
-        if (!empty($taxonomyTerms)) {
-
-            $selected = ($selectedValue == 0) ? 'selected = "selected"' : '';
-
-            if ($showOptionsAll) {
-                $output .= "<option {$selected} value=\"0\">{$showOptionsAll}</option>";
+            if ($isHierarchical) {
+                $taxonomyTerms = $this->getHierarchicalTerms($taxonomy, null, $args);
+            } else {
+                $taxonomyTerms = $this->getTermsByTaxonomy($taxonomy, $args);
             }
 
-            if (!$isHierarchical) {
-                foreach ($taxonomyTerms as $taxonomyTerm) {
-                    $selected = ($selectedValue != 0 && $selectedValue == $taxonomyTerm[ $valueField ]) ? 'selected = "selected"' : '';
-                    $postCounts = ($withPostCounts) ? ' (' . $taxonomyTerm[ 'count' ] . ')' : '';
-                    $value = isset($taxonomyTerm[ $valueField ]) ? $taxonomyTerm[ $valueField ] : $taxonomyTerm[ 'term' ][ $valueField ];
-                    $output .= "<option $selected value=\"{$value}\">{$taxonomyTerm['term']['name']}{$postCounts}</option>";
+            $output = "<select id=\"{$selectId}\" name=\"{$selectName}\" class=\"{$selectClass}\">";
+
+
+            if (!empty($taxonomyTerms)) {
+
+                $selected = ($selectedValue == 0) ? 'selected = "selected"' : '';
+
+                if ($showOptionsAll) {
+                    $output .= "<option {$selected} value=\"0\">{$showOptionsAll}</option>";
+                }
+
+                if (!$isHierarchical) {
+                    foreach ($taxonomyTerms as $taxonomyTerm) {
+                        $selected = ($selectedValue != 0 && $selectedValue == $taxonomyTerm[ $valueField ]) ? 'selected = "selected"' : '';
+                        $postCounts = ($withPostCounts) ? ' (' . $taxonomyTerm[ 'count' ] . ')' : '';
+                        $value = isset($taxonomyTerm[ $valueField ]) ? $taxonomyTerm[ $valueField ] : $taxonomyTerm[ 'term' ][ $valueField ];
+                        $output .= "<option $selected value=\"{$value}\">{$taxonomyTerm['term']['name']}{$postCounts}</option>";
+                    }
+                } else {
+                    $output .= $this->_termsDropdownWalker($taxonomyTerms, $args);
                 }
             } else {
-                $output .= $this->_termsDropdownWalker($taxonomyTerms, $args);
+                $output .= "<option value=\"{$optionNoneValue}\">{$showOptionNone}</option>";
             }
-        } else {
-            $output .= "<option value=\"{$optionNoneValue}\">{$showOptionNone}</option>";
+
+            $output .= '</select>';
         }
 
-        $output .= '</select>';
-
-        if ($echo)
+        if ($echo) {
             echo $output;
-
-        return $output;
-
+        } else {
+            return $output;
+        }
     }
 
     public function getHierarchicalTerms ($taxonomy, $parent = null, $args = [])
     {
+        $cache_key = $this->setCacheKey('get_herarchical_terms_' . $taxonomy . '_' . $parent . '_' . md5(http_build_query($args)));
+
+        if (Cache::has($cache_key))
+            return Cache::get($cache_key);
+
         if ($this->taxonomyExists($taxonomy) && $this->isTaxonomyHierarchical($taxonomy)) {
             $taxonomyTerms = $this->getTermsByTaxonomy($taxonomy, $args);
             if (count($taxonomyTerms) > 0) {
-                return $this->_buildTermsTree($taxonomyTerms, $parent);
+                $result = $this->_buildTermsTree($taxonomyTerms, $parent);
+                Cache::forever($cache_key, $result);
+            } else {
+                return;
             }
+        } else {
+            return;
         }
 
-        return [];
+        return $result;
     }
 
     public function getTermsByTaxonomy ($taxonomy, $args = [])
     {
+
+
         $defaults = [
             'orderby'    => 'id',
             'order'      => 'ASC',
@@ -363,14 +386,20 @@ class Taxonomy
 
         $args = array_merge($defaults, $args);
 
+        $cache_key = $this->setCacheKey('get_terms_by_taxonomy_' . $taxonomy . '_' . md5(http_build_query($args)));
+
+        if (Cache::has($cache_key))
+            return Cache::get($cache_key);
+
         if ($this->taxonomyExists($taxonomy)) {
             $termTaxonomies = $this->termTaxonomyRepository->getTaxonomyTerms($taxonomy, $args);
 
-            return null !== $termTaxonomies ? $termTaxonomies : [];
-
+            $result = null != $termTaxonomies ? $termTaxonomies : [];
+        } else {
+            $result = [];
         }
 
-        return [];
+        return $result;
     }
 
     protected function _buildTermsTree (array $taxonomyTerms, $parent = null, $depth = 0)

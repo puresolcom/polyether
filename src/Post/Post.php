@@ -201,7 +201,7 @@ class Post
     public function find ($post_id)
     {
 
-        $cache_key = md5('post' . $post_id);
+        $cache_key = 'post_' . md5($post_id);
 
         // See if we've the post cached earlier in this request and return it if it's available
         if (Cache::has($cache_key)) {
@@ -222,7 +222,7 @@ class Post
     public function query ($args = [])
     {
         $current_page = Request::get('page', 1);
-        $cache_key = md5('posts' . http_build_query($args) . '_' . $current_page);
+        $cache_key = 'posts_' . md5(http_build_query($args) . '_' . $current_page);
         if (Cache::has($cache_key)) {
             $posts = Cache::get($cache_key);
         } else {

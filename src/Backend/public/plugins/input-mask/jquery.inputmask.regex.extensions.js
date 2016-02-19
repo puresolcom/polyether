@@ -1,13 +1,13 @@
 /*
-Input Mask plugin extensions
-http://github.com/RobinHerbots/jquery.inputmask
-Copyright (c) 2010 - 2014 Robin Herbots
-Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-Version: 0.0.0
+ Input Mask plugin extensions
+ http://github.com/RobinHerbots/jquery.inputmask
+ Copyright (c) 2010 - 2014 Robin Herbots
+ Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
+ Version: 0.0.0
 
-Regex extensions on the jquery.inputmask base
-Allows for using regular expressions as a mask
-*/
+ Regex extensions on the jquery.inputmask base
+ Allows for using regular expressions as a mask
+ */
 (function ($) {
     $.extend($.inputmask.defaults.aliases, { // $(selector).inputmask("Regex", { regex: "[0-9]*"}
         'Regex': {
@@ -28,6 +28,7 @@ Allows for using regular expressions as a mask
                             this.isQuantifier = false;
                             this.isLiteral = false;
                         }
+
                         function analyseRegex() {
                             var currentToken = new regexToken(), match, m, opengroups = [];
 
@@ -90,6 +91,7 @@ Allows for using regular expressions as a mask
                             if (currentToken.matches.length > 0)
                                 opts.regexTokens.push(currentToken);
                         }
+
                         function validateRegexToken(token, fromGroup) {
                             var isvalid = false;
                             if (fromGroup) {

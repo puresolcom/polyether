@@ -31,7 +31,7 @@ class PluginAPI
 
         $plugins_dirs = array_diff(scandir($this->getPluginsDir(), SCANDIR_SORT_ASCENDING), array('.', '..'));
 
-        if (FALSE !== $plugins_dirs) {
+        if (false !== $plugins_dirs) {
             $lastModifiedDate = filemtime($this->getPluginsDir());
 
             if ($lastModifiedDate == Option::get('plugins_dir_lmd')) {
@@ -49,20 +49,10 @@ class PluginAPI
         return [];
     }
 
-    public function getPluginsDir ()
-    {
-        return $this->pluginsDir;
-    }
-
-    public function setPluginsDir ($dir)
-    {
-        $this->pluginsDir = $dir;
-    }
-
     private function includePlugins ($plugins)
     {
 
-        if (!is_array($plugins) || !is_object($plugins)) {
+        if ( ! is_array($plugins) || ! is_object($plugins)) {
             return false;
         }
 
@@ -78,6 +68,16 @@ class PluginAPI
                 }
             }
         }
+    }
+
+    public function getPluginsDir ()
+    {
+        return $this->pluginsDir;
+    }
+
+    public function setPluginsDir ($dir)
+    {
+        $this->pluginsDir = $dir;
     }
 
     /**
@@ -100,17 +100,18 @@ class PluginAPI
             self::_call_all_hook($args);
         }
 
-        if (!isset($this->filter[ $tag ])) {
+        if ( ! isset($this->filter[ $tag ])) {
             if (isset($this->filter[ 'all' ]))
                 array_pop($this->current_filter);
+
             return $value;
         }
 
-        if (!isset($this->filter[ 'all' ]))
+        if ( ! isset($this->filter[ 'all' ]))
             $this->current_filter[] = $tag;
 
         // Sort.
-        if (!isset($this->merged_filters[ $tag ])) {
+        if ( ! isset($this->merged_filters[ $tag ])) {
             ksort($this->filter[ $tag ]);
             $this->merged_filters[ $tag ] = true;
         }
@@ -121,7 +122,7 @@ class PluginAPI
             $args = func_get_args();
         do {
             foreach ((array)current($this->filter[ $tag ]) as $the_)
-                if (!is_null($the_[ 'function' ])) {
+                if ( ! is_null($the_[ 'function' ])) {
                     $args[ 1 ] = $value;
                     $value = call_user_func_array($the_[ 'function' ], array_slice($args, 1, (int)$the_[ 'accepted_args' ]));
                 }
@@ -152,7 +153,7 @@ class PluginAPI
         reset($this->filter[ 'all' ]);
         do {
             foreach ((array)current($this->filter[ 'all' ]) as $the_)
-                if (!is_null($the_[ 'function' ]))
+                if ( ! is_null($the_[ 'function' ]))
                     call_user_func_array($the_[ 'function' ], $args);
         } while ( next($this->filter[ 'all' ]) !== false );
     }
@@ -177,17 +178,18 @@ class PluginAPI
             $this->_call_all_hook($all_args);
         }
 
-        if (!isset($this->filter[ $tag ])) {
+        if ( ! isset($this->filter[ $tag ])) {
             if (isset($this->filter[ 'all' ]))
                 array_pop($this->current_filter);
+
             return $args[ 0 ];
         }
 
-        if (!isset($this->filter[ 'all' ]))
+        if ( ! isset($this->filter[ 'all' ]))
             $this->current_filter[] = $tag;
 
         // Sort
-        if (!isset($this->merged_filters[ $tag ])) {
+        if ( ! isset($this->merged_filters[ $tag ])) {
             ksort($this->filter[ $tag ]);
             $this->merged_filters[ $tag ] = true;
         }
@@ -196,7 +198,7 @@ class PluginAPI
 
         do {
             foreach ((array)current($this->filter[ $tag ]) as $the_)
-                if (!is_null($the_[ 'function' ]))
+                if ( ! is_null($the_[ 'function' ]))
                     $args[ 0 ] = call_user_func_array($the_[ 'function' ], array_slice($args, 0, (int)$the_[ 'accepted_args' ]));
         } while ( next($this->filter[ $tag ]) !== false );
 
@@ -258,7 +260,7 @@ class PluginAPI
     {
 
         if (null === $filter) {
-            return !empty($this->current_filter);
+            return ! empty($this->current_filter);
         }
 
         return in_array($filter, $this->current_filter);
@@ -307,6 +309,7 @@ class PluginAPI
         $idx = self::_filter_build_unique_id($tag, $function_to_add, $priority);
         $this->filter[ $tag ][ $priority ][ $idx ] = array('function' => $function_to_add, 'accepted_args' => $accepted_args);
         unset($this->merged_filters[ $tag ]);
+
         return true;
     }
 
@@ -344,7 +347,7 @@ class PluginAPI
                 return spl_object_hash($function[ 0 ]) . $function[ 1 ];
             } else {
                 $obj_idx = get_class($function[ 0 ]) . $function[ 1 ];
-                if (!isset($function[ 0 ]->filter_id)) {
+                if ( ! isset($function[ 0 ]->filter_id)) {
                     if (false === $priority)
                         return false;
                     $obj_idx .= isset($this->filter[ $tag ][ $priority ]) ? count((array)$this->filter[ $tag ][ $priority ]) : $filter_id_count;
@@ -378,7 +381,7 @@ class PluginAPI
      */
     public function do_action ($tag, $arg = '')
     {
-        if (!isset($this->actions[ $tag ]))
+        if ( ! isset($this->actions[ $tag ]))
             $this->actions[ $tag ] = 1;
         else
             ++$this->actions[ $tag ];
@@ -390,13 +393,14 @@ class PluginAPI
             self::_call_all_hook($all_args);
         }
 
-        if (!isset($this->filter[ $tag ])) {
+        if ( ! isset($this->filter[ $tag ])) {
             if (isset($this->filter[ 'all' ]))
                 array_pop($this->current_filter);
+
             return;
         }
 
-        if (!isset($this->filter[ 'all' ]))
+        if ( ! isset($this->filter[ 'all' ]))
             $this->current_filter[] = $tag;
 
         $args = array();
@@ -408,7 +412,7 @@ class PluginAPI
             $args[] = func_get_arg($a);
 
         // Sort
-        if (!isset($this->merged_filters[ $tag ])) {
+        if ( ! isset($this->merged_filters[ $tag ])) {
             ksort($this->filter[ $tag ]);
             $this->merged_filters[ $tag ] = true;
         }
@@ -417,7 +421,7 @@ class PluginAPI
 
         do {
             foreach ((array)current($this->filter[ $tag ]) as $the_)
-                if (!is_null($the_[ 'function' ]))
+                if ( ! is_null($the_[ 'function' ]))
                     call_user_func_array($the_[ 'function' ], array_slice($args, 0, (int)$the_[ 'accepted_args' ]));
         } while ( next($this->filter[ $tag ]) !== false );
 
@@ -433,7 +437,7 @@ class PluginAPI
      */
     public function did_action ($tag)
     {
-        if (!isset($this->actions[ $tag ]))
+        if ( ! isset($this->actions[ $tag ]))
             return 0;
 
         return $this->actions[ $tag ];
@@ -449,7 +453,7 @@ class PluginAPI
      */
     public function do_action_ref_array ($tag, $args)
     {
-        if (!isset($this->actions[ $tag ]))
+        if ( ! isset($this->actions[ $tag ]))
             $this->actions[ $tag ] = 1;
         else
             ++$this->actions[ $tag ];
@@ -461,17 +465,18 @@ class PluginAPI
             self::_call_all_hook($all_args);
         }
 
-        if (!isset($this->filter[ $tag ])) {
+        if ( ! isset($this->filter[ $tag ])) {
             if (isset($this->filter[ 'all' ]))
                 array_pop($this->current_filter);
+
             return;
         }
 
-        if (!isset($this->filter[ 'all' ]))
+        if ( ! isset($this->filter[ 'all' ]))
             $this->current_filter[] = $tag;
 
         // Sort
-        if (!isset($this->merged_filters[ $tag ])) {
+        if ( ! isset($this->merged_filters[ $tag ])) {
             ksort($this->filter[ $tag ]);
             $this->merged_filters[ $tag ] = true;
         }
@@ -480,7 +485,7 @@ class PluginAPI
 
         do {
             foreach ((array)current($this->filter[ $tag ]) as $the_)
-                if (!is_null($the_[ 'function' ]))
+                if ( ! is_null($the_[ 'function' ]))
                     call_user_func_array($the_[ 'function' ], array_slice($args, 0, (int)$the_[ 'accepted_args' ]));
         } while ( next($this->filter[ $tag ]) !== false );
 
@@ -526,19 +531,19 @@ class PluginAPI
         // Don't reset the internal array pointer
         $filter = $this->filter;
 
-        $has = !empty($filter[ $tag ]);
+        $has = ! empty($filter[ $tag ]);
 
         // Make sure at least one priority has a filter callback
         if ($has) {
             $exists = false;
             foreach ($filter[ $tag ] as $callbacks) {
-                if (!empty($callbacks)) {
+                if ( ! empty($callbacks)) {
                     $exists = true;
                     break;
                 }
             }
 
-            if (!$exists) {
+            if ( ! $exists) {
                 $has = false;
             }
         }
@@ -546,7 +551,7 @@ class PluginAPI
         if (false === $function_to_check || false === $has)
             return $has;
 
-        if (!$idx = _wp_filter_build_unique_id($tag, $function_to_check, false))
+        if ( ! $idx = _wp_filter_build_unique_id($tag, $function_to_check, false))
             return false;
 
         foreach ((array)array_keys($filter[ $tag ]) as $priority) {

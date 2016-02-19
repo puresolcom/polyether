@@ -89,9 +89,10 @@ class MigrationCommand extends Command
 
         $output = $this->laravel->view->make('entrust::generators.migration')->with($data)->render();
 
-        if (!file_exists($migrationFile) && $fs = fopen($migrationFile, 'x')) {
+        if ( ! file_exists($migrationFile) && $fs = fopen($migrationFile, 'x')) {
             fwrite($fs, $output);
             fclose($fs);
+
             return true;
         }
 

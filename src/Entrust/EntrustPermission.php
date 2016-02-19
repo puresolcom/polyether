@@ -8,10 +8,10 @@
  * @package Polyether\Entrust
  */
 
-use Polyether\Entrust\Contracts\EntrustPermissionInterface;
-use Polyether\Entrust\Traits\EntrustPermissionTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+use Polyether\Entrust\Contracts\EntrustPermissionInterface;
+use Polyether\Entrust\Traits\EntrustPermissionTrait;
 
 class EntrustPermission extends Model implements EntrustPermissionInterface
 {
@@ -29,7 +29,7 @@ class EntrustPermission extends Model implements EntrustPermissionInterface
      *
      * @param array $attributes
      */
-    public function __construct(array $attributes = [])
+    public function __construct (array $attributes = [])
     {
         parent::__construct($attributes);
         $this->table = Config::get('entrust.permissions_table');

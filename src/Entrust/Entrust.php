@@ -78,7 +78,7 @@ class Entrust
         $closure = function () use ($roles, $result, $requireAll) {
             $hasRole = $this->hasRole($roles, $requireAll);
 
-            if (!$hasRole) {
+            if ( ! $hasRole) {
                 return empty($result) ? $this->app->abort(403) : $result;
             }
         };
@@ -128,7 +128,7 @@ class Entrust
         $closure = function () use ($permissions, $result, $requireAll) {
             $hasPerm = $this->can($permissions, $requireAll);
 
-            if (!$hasPerm) {
+            if ( ! $hasPerm) {
                 return empty($result) ? $this->app->abort(403) : $result;
             }
         };
@@ -187,7 +187,7 @@ class Entrust
                 $hasRolePerm = $hasRole || $hasPerms;
             }
 
-            if (!$hasRolePerm) {
+            if ( ! $hasRolePerm) {
                 return empty($result) ? $this->app->abort(403) : $result;
             }
         };

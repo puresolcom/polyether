@@ -11,6 +11,7 @@ trait CacheHelperTrait
     public function setCacheKey ($key, $tag = 'default')
     {
         $this->cacheKeys[ $tag ][] = $key;
+
         return $key;
     }
 

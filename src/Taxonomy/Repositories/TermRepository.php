@@ -16,7 +16,7 @@ class TermRepository extends Repository
     {
 
 
-        if (!empty($taxonomy)) {
+        if ( ! empty($taxonomy)) {
             $params[ 'term_id' ] = $term_id;
             $params[ 'taxonomy' ] = $taxonomy;
             if (is_int($parent))
@@ -43,6 +43,7 @@ class TermRepository extends Repository
         $result = $this->model->select('id as term_id')->where('name', '=', $term)->orWhere('slug', '=', $this->createSlug($term))->first();
         if (null !== $result)
             return $result->toArray();
+
         return false;
     }
 
@@ -57,6 +58,7 @@ class TermRepository extends Repository
             if (is_numeric($parent))
                 $where->where('term_taxonomy.parent', '=', (int)$parent);
         })->first();
+
         return null != ($result) ? $result->toArray() : false;
     }
 

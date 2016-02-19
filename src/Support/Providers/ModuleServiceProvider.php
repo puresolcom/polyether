@@ -47,7 +47,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
     protected function loadRoutes ()
     {
         $routesPath = $this->packagePath . '/Http/routes.php';
-        if (!$this->app->routesAreCached()) {
+        if ( ! $this->app->routesAreCached()) {
             if (file_exists($routesPath))
                 require $routesPath;
         }
@@ -61,13 +61,18 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->publishAssets();
     }
 
+    protected function registerComponents ()
+    {
+        $this->registerConfig();
+    }
+
     protected function publishConfig ()
     {
         foreach ($this->configs as $config => $alias) {
 
             $this->publishes([
-                $this->packagePath . 'config/' . $config . '.php' => config_path($config . '.php'),
-            ]);
+                                 $this->packagePath . 'config/' . $config . '.php' => config_path($config . '.php'),
+                             ]);
         }
     }
 
@@ -76,8 +81,8 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->loadViewsFrom($this->packagePath . 'resources/views', $this->packageName);
 
         $this->publishes([
-            $this->packagePath . 'resources/views' => resource_path('views/vendor/' . $this->packageName),
-        ]);
+                             $this->packagePath . 'resources/views' => resource_path('views/vendor/' . $this->packageName),
+                         ]);
     }
 
     protected function registerTranslations ()
@@ -85,23 +90,18 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom($this->packagePath . 'resources/lang', $this->packageName);
 
         $this->publishes([
-            $this->packagePath . 'resources/lang' => resource_path('lang/vendor/' . $this->packageName),
-        ]);
+                             $this->packagePath . 'resources/lang' => resource_path('lang/vendor/' . $this->packageName),
+                         ]);
     }
 
     protected function publishAssets ()
     {
         $this->publishes([
-            $this->packagePath . 'public' => public_path('vendor/' . $this->packageName),
-        ], 'public');
+                             $this->packagePath . 'public' => public_path('vendor/' . $this->packageName),
+                         ], 'public');
         $this->publishes([
-            $this->packagePath . 'resources' => resource_path('vendor/' . $this->packageName),
-        ]);
-    }
-
-    protected function registerComponents ()
-    {
-        $this->registerConfig();
+                             $this->packagePath . 'resources' => resource_path('vendor/' . $this->packageName),
+                         ]);
     }
 
     protected function registerConfig ()

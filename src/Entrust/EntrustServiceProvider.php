@@ -28,8 +28,8 @@ class EntrustServiceProvider extends ServiceProvider
     {
         // Publish config files
         $this->publishes([
-            __DIR__ . DIRECTORY_SEPARATOR . 'config/config.php' => config_path('entrust.php'),
-        ]);
+                             __DIR__ . DIRECTORY_SEPARATOR . 'config/config.php' => config_path('entrust.php'),
+                         ]);
 
         // Register commands
         $this->commands('command.entrust.migration');
@@ -133,7 +133,7 @@ class EntrustServiceProvider extends ServiceProvider
     public function provides ()
     {
         return [
-            'command.entrust.migration'
+            'command.entrust.migration',
         ];
     }
 }

@@ -8,10 +8,10 @@
  * @package Polyether\Entrust
  */
 
-use Polyether\Entrust\Contracts\EntrustRoleInterface;
-use Polyether\Entrust\Traits\EntrustRoleTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+use Polyether\Entrust\Contracts\EntrustRoleInterface;
+use Polyether\Entrust\Traits\EntrustRoleTrait;
 
 class EntrustRole extends Model implements EntrustRoleInterface
 {
@@ -29,7 +29,7 @@ class EntrustRole extends Model implements EntrustRoleInterface
      *
      * @param array $attributes
      */
-    public function __construct(array $attributes = [])
+    public function __construct (array $attributes = [])
     {
         parent::__construct($attributes);
         $this->table = Config::get('entrust.roles_table');

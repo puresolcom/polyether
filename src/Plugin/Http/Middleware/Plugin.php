@@ -20,6 +20,7 @@ class Plugin
         // TODO: Get theme from user settings or system setting, or env or default....
         \Plugin::init();
         \Plugin::do_action('init');
+
         return $next($request);
     }
 

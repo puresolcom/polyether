@@ -33,7 +33,7 @@ $columns = array(
     array('db' => 'firstname', 'dt' => 1),
     array('db' => 'surname', 'dt' => 2),
     array('db' => 'zip', 'dt' => 3),
-    array('db' => 'country', 'dt' => 4)
+    array('db' => 'country', 'dt' => 4),
 );
 
 // SQL server connection information
@@ -41,7 +41,7 @@ $sql_details = array(
     'user' => '',
     'pass' => '',
     'db'   => '',
-    'host' => ''
+    'host' => '',
 );
 
 

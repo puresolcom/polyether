@@ -2,6 +2,7 @@
 
 namespace Polyether\Post\Repositories;
 
+use Polyether\Meta\Repositories\MetaQuery;
 use Polyether\Support\EloquentRepository as Repository;
 
 class PostRepository extends Repository
@@ -12,17 +13,22 @@ class PostRepository extends Repository
         return \Polyether\Post\Models\Post::class;
     }
 
-    public function allPosts ($args)
+    /**
+     * @param null|array $args
+     */
+    public function queryPosts ($args = null)
     {
-        $columns = ['*'];
-        if (isset($args[ 'columns' ]) && !empty($args[ 'columns' ]))
-            $columns = $args[ 'columns' ];
+        $model = $this->model;
 
-        if (isset($args[ 'paginate' ]) && !empty($args[ 'paginate' ])) {
-            return parent::paginate($args[ 'paginate' ], $columns);
-        } else {
-            return parent::all($columns);
-        }
+        if (isset($args[ 'user_meta_query' ]) || isset($args[ 'post_meta_query' ]))
+            $metaQuery = new MetaQuery();
+
+        if (isset($args[ 'user_meta_query' ])) $model = $metaQuery->whereHasUserMeta($args[ 'user_meta_query' ], $model);
+        if (isset($args[ 'post_meta_query' ])) $model = $metaQuery->whereHasPostMeta($args[ 'post_meta_query' ], $model);
+
+
+        var_dump($model->get()->toArray());
+
     }
 
 }

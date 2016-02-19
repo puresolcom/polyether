@@ -64,12 +64,12 @@ class AuthController extends Controller
     protected function create (array $data)
     {
         $user = User::create([
-            'first_name' => $data[ 'first_name' ],
-            'last_name'  => $data[ 'last_name' ],
-            'username'   => $data[ 'username' ],
-            'email'      => $data[ 'email' ],
-            'password'   => bcrypt($data[ 'password' ]),
-        ]);
+                                 'first_name' => $data[ 'first_name' ],
+                                 'last_name'  => $data[ 'last_name' ],
+                                 'username'   => $data[ 'username' ],
+                                 'email'      => $data[ 'email' ],
+                                 'password'   => bcrypt($data[ 'password' ]),
+                             ]);
 
         Flash::success("Welcome" . $user->first_name . ", your user has been created");
 
@@ -99,16 +99,19 @@ class AuthController extends Controller
             // Allow only if user is root or enabled.
             if (('root' == $user->username) || ($user->enabled)) {
                 Flash::success("Welcome " . Auth::user()->first_name);
+
                 return redirect()->intended($this->redirectPath());
             } else {
                 Auth::logout();
+
                 return redirect(route('login'))
                     ->withInput($request->only('username', 'remember'))
                     ->withErrors([
-                        'username' => 'Unable to login using the login credentials provided',
-                    ]);
+                                     'username' => 'Unable to login using the login credentials provided',
+                                 ]);
             }
         }
+
         return redirect($this->loginPath())
             ->withInput($request->only('username', 'remember'))
             ->withErrors($this->getFailedLoginMessage());

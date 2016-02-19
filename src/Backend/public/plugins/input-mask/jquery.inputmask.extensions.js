@@ -1,12 +1,12 @@
 /*
-Input Mask plugin extensions
-http://github.com/RobinHerbots/jquery.inputmask
-Copyright (c) 2010 - 2014 Robin Herbots
-Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-Version: 0.0.0
+ Input Mask plugin extensions
+ http://github.com/RobinHerbots/jquery.inputmask
+ Copyright (c) 2010 - 2014 Robin Herbots
+ Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
+ Version: 0.0.0
 
-Optional extensions on the jquery.inputmask base
-*/
+ Optional extensions on the jquery.inputmask base
+ */
 (function ($) {
     //extra definitions
     $.extend($.inputmask.defaults.definitions, {
@@ -59,12 +59,14 @@ Optional extensions on the jquery.inputmask base
                                             if (!strict && !isValid) {
                                                 pos = pos - j;
                                                 for (k = 0; k < opts.defaultPrefix.length; k++) {
-                                                    buffer[pos] = opts.defaultPrefix[k]; pos++;
+                                                    buffer[pos] = opts.defaultPrefix[k];
+                                                    pos++;
                                                 }
                                                 for (k = 0; k < tmp.length - 1; k++) {
-                                                    buffer[pos] = tmp[k]; pos++;
+                                                    buffer[pos] = tmp[k];
+                                                    pos++;
                                                 }
-                                                return { "pos": pos };
+                                                return {"pos": pos};
                                             }
                                             return isValid;
                                         } else {

@@ -48,13 +48,14 @@ class OptionAPI
         if (isset($this->notoption[ $name ])) {
             if ($default)
                 return $default;
+
             return false;
         }
 
 
         if (isset($this->autoload[ $name ])) {
             $value = $this->autoload[ $name ];
-        } else if (FALSE !== ($cachedOption = $this->getCached($name))) {
+        } else if (false !== ($cachedOption = $this->getCached($name))) {
             $value = $cachedOption;
         } else if (Cache::has($cache_key)) {
             $value = Cache::get($cache_key);
@@ -69,6 +70,7 @@ class OptionAPI
                 $this->notoption[ $name ] = true;
                 if ($default)
                     return $default;
+
                 return false;
             }
         }
@@ -76,6 +78,7 @@ class OptionAPI
         if ($this->isJSON($value)) {
             return json_decode($value);
         }
+
         return $value;
     }
 
@@ -108,9 +111,11 @@ class OptionAPI
 
         if ($this->option->create(['option_name' => $name, 'option_value' => $value, 'autoload' => $autoload])) {
             $this->flushCache();
-            return TRUE;
+
+            return true;
         }
-        return FALSE;
+
+        return false;
     }
 
     public function update ($name, $value, $autoload = null)
@@ -133,9 +138,11 @@ class OptionAPI
 
         if ($this->option->updateOrCreate(['option_name' => $name], $updated_options)) {
             $this->flushCache();
-            return TRUE;
+
+            return true;
         }
-        return FALSE;
+
+        return false;
     }
 
 }

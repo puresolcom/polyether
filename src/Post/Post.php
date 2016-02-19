@@ -3,6 +3,7 @@
 namespace Polyether\Post;
 
 use Cache;
+use Option;
 use Polyether\Post\Repositories\PostRepository;
 use Polyether\Support\EtherError;
 use Request;
@@ -48,19 +49,19 @@ class Post
         $this->registerPostType('post', [
             'labels'       => [
                 'name'     => 'Posts',
-                'singular' => 'Post'
+                'singular' => 'Post',
             ],
             'hierarchical' => false,
-            '_built_in'    => true
+            '_built_in'    => true,
         ]);
 
         $this->registerPostType('page', [
             'labels'       => [
                 'name'     => 'Pages',
-                'singular' => 'Page'
+                'singular' => 'Page',
             ],
             'hierarchical' => true,
-            '_built_in'    => true
+            '_built_in'    => true,
         ]);
     }
 
@@ -79,7 +80,7 @@ class Post
         $defaults = [
             'labels'             => [
                 'name'     => 'Posts',
-                'singular' => 'Post'
+                'singular' => 'Post',
             ],
             'description'        => '',
             'show_ui'            => true,
@@ -134,7 +135,7 @@ class Post
      */
     public function getPostTypeObject ($post_type)
     {
-        if (!isset($this->postTypes[ $post_type ]))
+        if ( ! isset($this->postTypes[ $post_type ]))
             return false;
 
         return $this->postTypes[ $post_type ];
@@ -172,7 +173,7 @@ class Post
             'comment_status' => '',
             'post_parent'    => 0,
             'menu_order'     => 0,
-            'guid'           => sha1(time())
+            'guid'           => sha1(time()),
         ];
 
         $postArr = array_unique(array_merge($default, $postArr));
@@ -212,6 +213,7 @@ class Post
                 $post = $this->postRepository->findOrFail($post_id);
                 // Cache it using the caching system
                 Cache::put($cache_key, $post, \Option::get('posts_cache_expires', 60));
+
                 return $post;
             } catch (\Exception $e) {
                 return new EtherError($e);
@@ -221,19 +223,35 @@ class Post
 
     public function query ($args = [])
     {
+
+        $defaults = [
+            'orderby'       => 'id',
+            'order'         => 'DESC',
+            'paginate'      => Option::get('default_posts_paginate', 20),
+            'cat_in'        => [], //ids
+            'cat_not_in'    => [], //ids
+            'tag_in'        => [], //ids
+            'tag_not_in'    => [], //ids
+            'parent_in'     => [], //ids
+            'parent_not_in' => [],
+            'meta_query'    => [], // Array Of Arrays
+
+        ];
+
         $current_page = Request::get('page', 1);
         $cache_key = 'posts_' . md5(http_build_query($args) . '_' . $current_page);
         if (Cache::has($cache_key)) {
             $posts = Cache::get($cache_key);
         } else {
-            $posts = $this->postRepository->allPosts($args);
+            $posts = $this->postRepository->queryPosts($args);
 
-            if (!count($posts) > 0)
+            if ( ! count($posts) > 0)
                 return new EtherError('No Posts were found');
 
             Cache::put($cache_key, $posts, \Option::get('posts_cache_expires', 60));
 
         }
+
         return $posts;
     }
 

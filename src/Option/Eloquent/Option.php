@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Option extends Model
 {
 
-    protected $fillable = ['option_name', 'option_value', 'autoload'];
+    protected $fillable = [ 'option_name', 'option_value', 'autoload' ];
 
 }

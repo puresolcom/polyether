@@ -28,7 +28,7 @@ class PasswordController extends Controller
      */
     public function __construct ()
     {
-        $this->middleware('guest');
+        $this->middleware( 'guest' );
     }
 
     /**
@@ -40,7 +40,7 @@ class PasswordController extends Controller
     {
         $page_title = "Recover password";
 
-        return view('backend::auth.passwords.email', compact('page_title'));
+        return view( 'backend::auth.passwords.email', compact( 'page_title' ) );
     }
 
 }

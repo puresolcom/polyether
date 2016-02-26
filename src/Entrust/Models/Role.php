@@ -3,7 +3,7 @@
 namespace Polyether\Entrust\Models;
 
 
-use Polyether\Entrust\Middleware\EntrustRole;
+use Polyether\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {

@@ -8,11 +8,11 @@ class Term extends Model
 {
 
     public $timestamps = false;
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = [ 'name', 'slug' ];
+    protected $casts = [ 'id' => 'integer', ];
 
-    public function taxonomy ()
+    public function taxonomies ()
     {
-        return $this->hasOne(TermTaxonomy::class, 'term_id');
+        return $this->hasMany( TermTaxonomy::class, 'term_id', 'id' );
     }
-
 }

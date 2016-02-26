@@ -3,12 +3,10 @@
 namespace Polyether\Backend\Http\Controllers\Auth;
 
 use Auth;
-use Etherbase\App\Repositories\AuditRepository as Audit;
-use Etherbase\App\User;
-use Flash;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
 use Polyether\Backend\Http\Controllers\Controller;
+use UserGate;
 use Validator;
 
 class AuthController extends Controller
@@ -26,6 +24,9 @@ class AuthController extends Controller
 
     use AuthenticatesAndRegistersUsers;
 
+
+    protected $redirectTo = '/';
+
     /**
      * Create a new authentication controller instance.
      *
@@ -33,47 +34,7 @@ class AuthController extends Controller
      */
     public function __construct ()
     {
-        $this->middleware('guest', ['except' => 'getLogout']);
-    }
-
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array $data
-     *
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator (array $data)
-    {
-        return Validator::make($data, [
-            'first_name' => 'required|min:3|max:255',
-            'last_name'  => 'required|min:3|max:255',
-            'username'   => 'required|min:3|max:255',
-            'email'      => 'required|email|max:255|unique:users',
-            'password'   => 'required|confirmed|min:6',
-        ]);
-    }
-
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array $data
-     *
-     * @return User
-     */
-    protected function create (array $data)
-    {
-        $user = User::create([
-                                 'first_name' => $data[ 'first_name' ],
-                                 'last_name'  => $data[ 'last_name' ],
-                                 'username'   => $data[ 'username' ],
-                                 'email'      => $data[ 'email' ],
-                                 'password'   => bcrypt($data[ 'password' ]),
-                             ]);
-
-        Flash::success("Welcome" . $user->first_name . ", your user has been created");
-
-        return $user;
+        $this->middleware( 'guest', [ 'except' => 'getLogout' ] );
     }
 
     /**
@@ -83,38 +44,19 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function postLogin (Request $request)
+    public function postLogin ( Request $request )
     {
 
-        $this->validate($request, [
-            'username' => 'required|min:3|max:255',
-            'password' => 'required',
-        ]);
+        $this->validate( $request, [ 'username' => 'required|min:3|max:255', 'password' => 'required', ] );
 
-        $credentials = $request->only('username', 'password');
+        $credentials = $request->only( 'username', 'password' );
 
-        if (Auth::attempt($credentials, $request->has('remember'))) {
-
-            $user = Auth::user();
-            // Allow only if user is root or enabled.
-            if (('root' == $user->username) || ($user->enabled)) {
-                Flash::success("Welcome " . Auth::user()->first_name);
-
-                return redirect()->intended($this->redirectPath());
-            } else {
-                Auth::logout();
-
-                return redirect(route('login'))
-                    ->withInput($request->only('username', 'remember'))
-                    ->withErrors([
-                                     'username' => 'Unable to login using the login credentials provided',
-                                 ]);
-            }
+        if ( Auth::attempt( $credentials, $request->has( 'remember' ) ) ) {
+            return redirect()->intended( $this->getRedirectUrl() );
+        } else {
+            return redirect( route( 'login' ) )->withInput( $request->except( [ 'password' ] ) )->withErrors( [ $this->getFailedLoginMessage() ] );
         }
 
-        return redirect($this->loginPath())
-            ->withInput($request->only('username', 'remember'))
-            ->withErrors($this->getFailedLoginMessage());
     }
 
     /**
@@ -125,12 +67,12 @@ class AuthController extends Controller
     public function getLogin ()
     {
 
-        if (null !== Auth::user())
-            return redirect()->intended($this->redirectPath());
+        if ( null !== Auth::user() )
+            return redirect()->intended( $this->redirectPath() );
 
         $page_title = "Login";
 
-        return view('backend::auth.login', compact('page_title'));
+        return view( 'backend::auth.login', compact( 'page_title' ) );
     }
 
     /**
@@ -142,7 +84,43 @@ class AuthController extends Controller
     {
         $page_title = "Register";
 
-        return view('backend::auth.register', compact('page_title'));
+        return view( 'backend::auth.register', compact( 'page_title' ) );
+    }
+
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array $data
+     *
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator ( array $data )
+    {
+        return Validator::make( $data, [ 'first_name'   => 'required|min:3|max:255',
+                                         'last_name'    => 'required|min:3|max:255',
+                                         'username'     => 'required|min:3|max:32|unique:users',
+                                         'email'        => 'required|email|max:255|unique:users',
+                                         'password'     => 'required|confirmed|min:6',
+                                         'terms_agreed' => 'required', ], [ 'terms_agreed.required' => 'You must agree our TOS in order to proceed with registration' ] );
+    }
+
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array $data
+     *
+     * @return User
+     */
+    protected function create ( array $data )
+    {
+        $user = UserGate::create( [ 'first_name' => $data[ 'first_name' ], 'last_name' => $data[ 'last_name' ],
+                                    'username'   => $data[ 'username' ], 'email' => $data[ 'email' ],
+                                    'password'   => bcrypt( $data[ 'password' ] ), 'enabled' => true, ] );
+
+        if ( $user )
+            $user->attachRole( 2 );
+
+        return $user;
     }
 
 }

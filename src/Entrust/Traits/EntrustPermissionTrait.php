@@ -23,13 +23,13 @@ trait EntrustPermissionTrait
     {
         parent::boot();
 
-        static::deleting(function ($permission) {
-            if ( ! method_exists(Config::get('entrust.permission'), 'bootSoftDeletes')) {
-                $permission->roles()->sync([]);
+        static::deleting( function ( $permission ) {
+            if ( ! method_exists( Config::get( 'entrust.permission' ), 'bootSoftDeletes' ) ) {
+                $permission->roles()->sync( [ ] );
             }
 
             return true;
-        });
+        } );
     }
 
     /**
@@ -39,6 +39,6 @@ trait EntrustPermissionTrait
      */
     public function roles ()
     {
-        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.permission_role_table'));
+        return $this->belongsToMany( Config::get( 'entrust.role' ), Config::get( 'entrust.permission_role_table' ) );
     }
 }

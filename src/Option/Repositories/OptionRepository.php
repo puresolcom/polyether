@@ -12,9 +12,9 @@ class OptionRepository extends Repository
         return \Polyether\Option\Eloquent\Option::class;
     }
 
-    public function updateOrCreate ($attrs, $values)
+    public function updateOrCreate ( $attrs, $values )
     {
-        return $this->model->updateOrCreate($attrs, $values);
+        return $this->model->updateOrCreate( $attrs, $values );
     }
 
 }

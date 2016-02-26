@@ -8,6 +8,11 @@ class TermTaxonomyRelationships extends Model
 {
 
     public $timestamps = false;
-    protected $fillable = ['object_id', 'term_taxonomy_id'];
+    protected $table = 'term_relationships';
+    protected $fillable = [ 'object_id', 'term_taxonomy_id' ];
 
+    public function termTaxonomies ()
+    {
+        return $this->belongsTo( TermTaxonomy::class, 'term_taxonomy_id', 'id' );
+    }
 }

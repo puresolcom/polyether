@@ -11,7 +11,11 @@
   "require": {
     "Illuminate/Support": "5.2.*",
     "illuminate/database": "5.2.*",
-    "bosnadev/repositories": "0.*"
+    "predis/predis": "~1.1@dev",
+    "bosnadev/repositories": "0.9",
+    "watson/bootstrap-form": "dev-master",
+    "yajra/laravel-datatables-oracle": "~6.0",
+    "orchestra/asset": "3.2.*"
   },
   "autoload": {
     "psr-4": {

@@ -20,7 +20,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
     protected $routeMiddleware = [ ];
     protected $publishViews = true;
 
-    public function boot ()
+    public function boot()
     {
         $this->registerMiddleware();
         $this->loadRoutes();
@@ -28,7 +28,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->registerComponents();
     }
 
-    protected function registerMiddleware ()
+    protected function registerMiddleware()
     {
 
         // Register middleware
@@ -45,16 +45,17 @@ abstract class ModuleServiceProvider extends ServiceProvider
         }
     }
 
-    protected function loadRoutes ()
+    protected function loadRoutes()
     {
         $routesPath = $this->packagePath . '/Http/routes.php';
         if ( ! $this->app->routesAreCached() ) {
-            if ( file_exists( $routesPath ) )
+            if ( file_exists( $routesPath ) ) {
                 require $routesPath;
+            }
         }
     }
 
-    protected function registerBootComponents ()
+    protected function registerBootComponents()
     {
         $this->publishConfig();
         $this->registerViews();
@@ -62,12 +63,12 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->publishAssets();
     }
 
-    protected function registerComponents ()
+    protected function registerComponents()
     {
         $this->registerConfig();
     }
 
-    protected function publishConfig ()
+    protected function publishConfig()
     {
         foreach ( $this->configs as $config => $alias ) {
 
@@ -75,40 +76,41 @@ abstract class ModuleServiceProvider extends ServiceProvider
         }
     }
 
-    protected function registerViews ()
+    protected function registerViews()
     {
         $this->loadViewsFrom( $this->packagePath . 'resources/views', $this->packageName );
 
-        if ( $this->publishViews )
+        if ( $this->publishViews ) {
             $this->publishes( [ $this->packagePath . 'resources/views' => resource_path( 'views/vendor/' . $this->packageName ), ] );
+        }
     }
 
-    protected function registerTranslations ()
+    protected function registerTranslations()
     {
         $this->loadTranslationsFrom( $this->packagePath . 'resources/lang', $this->packageName );
 
         $this->publishes( [ $this->packagePath . 'resources/lang' => resource_path( 'lang/vendor/' . $this->packageName ), ] );
     }
 
-    protected function publishAssets ()
+    protected function publishAssets()
     {
         $this->publishes( [ $this->packagePath . 'public' => public_path( 'vendor/' . $this->packageName ), ], 'public' );
         $this->publishes( [ $this->packagePath . 'resources' => resource_path( 'vendor/' . $this->packageName ), ] );
     }
 
-    protected function registerConfig ()
+    protected function registerConfig()
     {
         foreach ( $this->configs as $config => $alias ) {
             $this->mergeConfigFrom( $this->packagePath . 'config/' . $config . '.php', $alias );
         }
     }
 
-    public function register ()
+    public function register()
     {
         $this->InitVars();
         $this->registerComponents();
     }
 
-    protected abstract function InitVars ();
+    protected abstract function InitVars();
 
 }

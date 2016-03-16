@@ -2,6 +2,7 @@
 
 namespace Polyether\Backend\Http\Controllers\Backend;
 
+use Asset;
 use Auth;
 use Illuminate\Http\Request;
 use Plugin;
@@ -16,20 +17,21 @@ class PostTypeController extends BackendController
 
     protected $postRepository;
 
-    public function __construct ( PostRepository $postRepository )
+    public function __construct( PostRepository $postRepository )
     {
         $this->postRepository = $postRepository;
     }
 
-    public function getIndex ( $postType )
+    public function getIndex( $postType )
     {
 
         $postType = Post::getPostTypeObject( $postType );
 
         if ( $postType ) {
             $perm = '*_' . str_plural( $postType->name );
-            if ( ! Auth::user()->can( $perm ) )
+            if ( ! Auth::user()->can( $perm ) ) {
                 abort( 403 );
+            }
 
             $data[ 'title' ] = isset( $postType->labels[ 'name' ] ) ? $postType->labels[ 'name' ] : str_plural( $postType->name );
             $data[ 'header_title' ] = $data[ 'title' ] . ' List';
@@ -46,7 +48,10 @@ class PostTypeController extends BackendController
             $dataTable->setPerPage( 20 );
 
             $data[ 'datatable_html' ] = $dataTable->getDataTablesHtml();
-            $data[ 'datatable_js' ] = $dataTable->getDataTablesJs();
+
+            Plugin::add_action( 'ether_backend_foot', function() use ( $dataTable ) {
+                echo $dataTable->getDataTablesJs();
+            }, 1501 );
 
             return view( 'backend::post.list', $data );
 
@@ -56,7 +61,7 @@ class PostTypeController extends BackendController
 
     }
 
-    public function getCreate ( $postType )
+    public function getCreate( $postType )
     {
         if ( Post::postTypeObjectExists( $postType ) ) {
             return 'Welcome to ' . $postType . ' add new page';
@@ -65,27 +70,43 @@ class PostTypeController extends BackendController
         }
     }
 
-    public function postCreate ( $postType, $data )
+    public function postCreate( $postType, $data )
     {
 
     }
 
-    public function getEdit ( $postId )
+    public function getEdit( $postId )
     {
         $post = Post::find( $postId, [ 'id', 'post_author', 'post_content', 'post_title', 'post_excerpt', 'post_status',
                                        'comment_status', 'post_slug', 'post_parent', 'guid', 'menu_order', 'post_type',
                                        'post_mime_type', 'comment_count', 'created_at' ] );
-        if ( ! $post )
+        if ( ! $post ) {
             abort( 404 );
+        }
+
+        Plugin::add_action( 'ether_backend_global_js', function() use ( $postId ) {
+            echo "\n" . 'var objectId = ' . $postId . ';';
+        } );
+
+        Plugin::add_action( 'ether_backend_foot', function() {
+            Asset::container( 'backend_footer' )
+                 ->add( 'ajax-edit-post-js', 'vendor/backend/js/edit_post.js', [ 'jquery' ] );
+        } );
+
 
         $postType = Post::getPostTypeObject( $post->post_type );
 
-        $data[ 'header_title' ] = isset( $postType->label[ 'name' ] ) ? $postType->label[ 'name' ] : str_plural( ucfirst( $postType->name ) );
+        $postTaxonomies = Taxonomy::getObjectTaxonomies( $post, 'objects' );
 
+        $uiTaxonomies = Taxonomy::filterTaxonomies( [ 'show_ui' => true ], $postTaxonomies );
+
+        $data[ 'uiTaxonomies' ] = $uiTaxonomies;
+        $data[ 'header_title' ] = isset( $postType->labels[ 'name' ] ) ? $postType->labels[ 'name' ] : str_plural( ucfirst( $postType->name ) );
         $data[ 'title' ] = 'Edit ' . ucfirst( $post->post_type );
         $data[ 'post' ] = $post;
+        $data[ 'postId' ] = $post->id;
 
-        Plugin::add_action( 'ether_backend_foot', function () {
+        Plugin::add_action( 'ether_backend_foot', function() {
             echo '<script type="text/javascript">
                         $(function () {
                             $(\'#post_created_at_date\').datetimepicker(
@@ -95,26 +116,28 @@ class PostTypeController extends BackendController
                             );
                         });
                     </script>';
-        }, 1 );
+        }, 1501 );
 
         return view( 'backend::post.edit', $data );
     }
 
-    public function putEdit ( $postId, Request $request )
+    public function putEdit( $postId, Request $request )
     {
-        $postData = $request->except( [ '_method', '_token', 'taxonomy' ] );
+        $postData = $request->get( 'post' );
         $taxonomies = $request->get( 'taxonomy' );
-
 
         if ( ! empty( $postData ) ) {
             $postUpdate = Post::update( $postId, $postData );
-            if ( $postUpdate instanceof EtherError )
+            if ( $postUpdate instanceof EtherError ) {
                 return redirect( route( 'post_edit', $postId ) )->withErrors( $postUpdate );
+            }
         }
 
         if ( isset( $taxonomies ) ) {
             foreach ( $taxonomies as $taxonomy => $terms ) {
-                $terms = array_map( 'intval', $terms );
+                $terms = array_map( function( $term ) {
+                    return is_numeric( $term ) ? (int)$term : $term;
+                }, $terms );
                 Taxonomy::setObjectTerms( $postId, $terms, $taxonomy );
             }
         }
@@ -122,16 +145,18 @@ class PostTypeController extends BackendController
         return redirect( route( 'post_edit', $postId ) )->with( 'success', 'Information updated successfully' );
     }
 
-    public function postGetPostTypeDataTableResult ( $postType )
+    public function postGetPostTypeDataTableResult( $postType )
     {
 
         $postType = Post::getPostTypeObject( $postType );
 
-        if ( ! $postType )
+        if ( ! $postType ) {
             abort( 400 );
+        }
 
-        if ( ! Auth::user()->can( '*_' . str_plural( $postType->name ) ) )
+        if ( ! Auth::user()->can( '*_' . str_plural( $postType->name ) ) ) {
             abort( 403 );
+        }
 
 
         $args = [ 'columns' => [ 'id', 'post_title', 'post_status', 'created_at', 'updated_at' ],
@@ -139,7 +164,7 @@ class PostTypeController extends BackendController
 
         $dataTables = $this->postRepository->dataTable( $args );
 
-        $dataTables->addColumn( 'actions', function ( $post ) use ( $postType ) {
+        $dataTables->addColumn( 'actions', function( $post ) use ( $postType ) {
 
             $output = '';
 

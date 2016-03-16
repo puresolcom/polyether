@@ -18,17 +18,17 @@ class Post extends Model
 
     protected $dates = [ 'created_at', 'updated_at', 'deleted_at' ];
 
-    public function author ()
+    public function author()
     {
         return $this->belongsTo( User::class, 'post_author', 'id' );
     }
 
-    public function postMeta ()
+    public function postMeta()
     {
         return $this->hasMany( PostMeta::class, 'post_id', 'id' );
     }
 
-    public function termTaxonomies ()
+    public function termTaxonomies()
     {
         return $this->belongsToMany( TermTaxonomy::class, 'term_relationships', 'object_id', 'term_taxonomy_id' );
     }

@@ -32,7 +32,7 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct ()
+    public function __construct()
     {
         $this->middleware( 'guest', [ 'except' => 'getLogout' ] );
     }
@@ -44,7 +44,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function postLogin ( Request $request )
+    public function postLogin( Request $request )
     {
 
         $this->validate( $request, [ 'username' => 'required|min:3|max:255', 'password' => 'required', ] );
@@ -54,7 +54,8 @@ class AuthController extends Controller
         if ( Auth::attempt( $credentials, $request->has( 'remember' ) ) ) {
             return redirect()->intended( $this->getRedirectUrl() );
         } else {
-            return redirect( route( 'login' ) )->withInput( $request->except( [ 'password' ] ) )->withErrors( [ $this->getFailedLoginMessage() ] );
+            return redirect( route( 'login' ) )->withInput( $request->except( [ 'password' ] ) )
+                                               ->withErrors( [ $this->getFailedLoginMessage() ] );
         }
 
     }
@@ -64,11 +65,12 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getLogin ()
+    public function getLogin()
     {
 
-        if ( null !== Auth::user() )
+        if ( null !== Auth::user() ) {
             return redirect()->intended( $this->redirectPath() );
+        }
 
         $page_title = "Login";
 
@@ -80,7 +82,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getRegister ()
+    public function getRegister()
     {
         $page_title = "Register";
 
@@ -94,7 +96,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator ( array $data )
+    protected function validator( array $data )
     {
         return Validator::make( $data, [ 'first_name'   => 'required|min:3|max:255',
                                          'last_name'    => 'required|min:3|max:255',
@@ -111,14 +113,15 @@ class AuthController extends Controller
      *
      * @return User
      */
-    protected function create ( array $data )
+    protected function create( array $data )
     {
         $user = UserGate::create( [ 'first_name' => $data[ 'first_name' ], 'last_name' => $data[ 'last_name' ],
                                     'username'   => $data[ 'username' ], 'email' => $data[ 'email' ],
                                     'password'   => bcrypt( $data[ 'password' ] ), 'enabled' => true, ] );
 
-        if ( $user )
+        if ( $user ) {
             $user->attachRole( 2 );
+        }
 
         return $user;
     }

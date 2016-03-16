@@ -20,7 +20,7 @@ class EntrustPermission
      *
      * @param Guard $auth
      */
-    public function __construct ( Guard $auth )
+    public function __construct( Guard $auth )
     {
         $this->auth = $auth;
     }
@@ -34,7 +34,7 @@ class EntrustPermission
      *
      * @return mixed
      */
-    public function handle ( $request, Closure $next, $permissions )
+    public function handle( $request, Closure $next, $permissions )
     {
         if ( $this->auth->guest() || ! $request->user()->can( explode( '|', $permissions ) ) ) {
             abort( 403 );

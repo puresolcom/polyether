@@ -24,7 +24,7 @@ class Entrust
      *
      * @return void
      */
-    public function __construct ( $app )
+    public function __construct( $app )
     {
         $this->app = $app;
     }
@@ -38,7 +38,7 @@ class Entrust
      *
      * @return bool
      */
-    public function ability ( $roles, $permissions, $options = [ ] )
+    public function ability( $roles, $permissions, $options = [ ] )
     {
         if ( $user = $this->user() ) {
             return $user->ability( $roles, $permissions, $options );
@@ -52,7 +52,7 @@ class Entrust
      *
      * @return Illuminate\Auth\UserInterface|null
      */
-    public function user ()
+    public function user()
     {
         return $this->app->auth->user();
     }
@@ -70,12 +70,12 @@ class Entrust
      *
      * @return mixed
      */
-    public function routeNeedsRole ( $route, $roles, $result = null, $requireAll = true )
+    public function routeNeedsRole( $route, $roles, $result = null, $requireAll = true )
     {
         $filterName = is_array( $roles ) ? implode( '_', $roles ) : $roles;
         $filterName .= '_' . substr( md5( $route ), 0, 6 );
 
-        $closure = function () use ( $roles, $result, $requireAll ) {
+        $closure = function() use ( $roles, $result, $requireAll ) {
             $hasRole = $this->hasRole( $roles, $requireAll );
 
             if ( ! $hasRole ) {
@@ -98,7 +98,7 @@ class Entrust
      *
      * @return bool
      */
-    public function hasRole ( $role, $requireAll = false )
+    public function hasRole( $role, $requireAll = false )
     {
         if ( $user = $this->user() ) {
             return $user->hasRole( $role, $requireAll );
@@ -120,12 +120,12 @@ class Entrust
      *
      * @return mixed
      */
-    public function routeNeedsPermission ( $route, $permissions, $result = null, $requireAll = true )
+    public function routeNeedsPermission( $route, $permissions, $result = null, $requireAll = true )
     {
         $filterName = is_array( $permissions ) ? implode( '_', $permissions ) : $permissions;
         $filterName .= '_' . substr( md5( $route ), 0, 6 );
 
-        $closure = function () use ( $permissions, $result, $requireAll ) {
+        $closure = function() use ( $permissions, $result, $requireAll ) {
             $hasPerm = $this->can( $permissions, $requireAll );
 
             if ( ! $hasPerm ) {
@@ -148,7 +148,7 @@ class Entrust
      *
      * @return bool
      */
-    public function can ( $permission, $requireAll = false )
+    public function can( $permission, $requireAll = false )
     {
         if ( $user = $this->user() ) {
             return $user->can( $permission, $requireAll );
@@ -171,13 +171,13 @@ class Entrust
      *
      * @return void
      */
-    public function routeNeedsRoleOrPermission ( $route, $roles, $permissions, $result = null, $requireAll = false )
+    public function routeNeedsRoleOrPermission( $route, $roles, $permissions, $result = null, $requireAll = false )
     {
         $filterName = is_array( $roles ) ? implode( '_', $roles ) : $roles;
         $filterName .= '_' . ( is_array( $permissions ) ? implode( '_', $permissions ) : $permissions );
         $filterName .= '_' . substr( md5( $route ), 0, 6 );
 
-        $closure = function () use ( $roles, $permissions, $result, $requireAll ) {
+        $closure = function() use ( $roles, $permissions, $result, $requireAll ) {
             $hasRole = $this->hasRole( $roles, $requireAll );
             $hasPerms = $this->can( $permissions, $requireAll );
 

@@ -7,7 +7,7 @@ use Polyether\Support\EloquentRepository as Repository;
 class TermTaxonomyRelationshipsRepository extends Repository
 {
 
-    public function model ()
+    public function model()
     {
         return \Polyether\Taxonomy\Models\TermTaxonomyRelationships::class;
     }

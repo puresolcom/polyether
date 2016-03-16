@@ -7,7 +7,7 @@ use Illuminate\Support\ServiceProvider;
 class PluginServiceProvider extends ServiceProvider
 {
 
-    public function boot ()
+    public function boot()
     {
 
         // Pushing the plugin's middleware
@@ -16,9 +16,9 @@ class PluginServiceProvider extends ServiceProvider
         $httpKernel->pushMiddleware( Http\Middleware\Plugin::class );
     }
 
-    public function register ()
+    public function register()
     {
-        $this->app->singleton( 'Plugin', function ( $app ) {
+        $this->app->singleton( 'Plugin', function( $app ) {
             return new PluginAPI();
         } );
     }

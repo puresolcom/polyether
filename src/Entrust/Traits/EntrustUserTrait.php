@@ -23,11 +23,11 @@ trait EntrustUserTrait
      *
      * @return void|bool
      */
-    public static function boot ()
+    public static function boot()
     {
         parent::boot();
 
-        static::deleting( function ( $user ) {
+        static::deleting( function( $user ) {
             if ( ! method_exists( Config::get( 'auth.model' ), 'bootSoftDeletes' ) ) {
                 $user->roles()->sync( [ ] );
             }
@@ -36,19 +36,19 @@ trait EntrustUserTrait
         } );
     }
 
-    public function save ( array $options = [ ] )
+    public function save( array $options = [ ] )
     {   //both inserts and updates
         parent::save( $options );
         Cache::tags( Config::get( 'entrust.role_user_table' ) )->flush();
     }
 
-    public function delete ( array $options = [ ] )
+    public function delete( array $options = [ ] )
     {   //soft or hard
         parent::delete( $options );
         Cache::tags( Config::get( 'entrust.role_user_table' ) )->flush();
     }
 
-    public function restore ()
+    public function restore()
     {   //soft delete undo's
         parent::restore();
         Cache::tags( Config::get( 'entrust.role_user_table' ) )->flush();
@@ -65,7 +65,7 @@ trait EntrustUserTrait
      *
      * @return array|bool
      */
-    public function ability ( $roles, $permissions, $options = [ ] )
+    public function ability( $roles, $permissions, $options = [ ] )
     {
         // Convert string to array if that's what is passed in.
         if ( ! is_array( $roles ) ) {
@@ -129,7 +129,7 @@ trait EntrustUserTrait
      *
      * @return bool
      */
-    public function hasRole ( $name, $requireAll = false )
+    public function hasRole( $name, $requireAll = false )
     {
         if ( is_array( $name ) ) {
             foreach ( $name as $roleName ) {
@@ -165,7 +165,7 @@ trait EntrustUserTrait
      *
      * @return bool
      */
-    public function can ( $permission, $requireAll = false )
+    public function can( $permission, $requireAll = false )
     {
         if ( is_array( $permission ) ) {
             foreach ( $permission as $permName ) {
@@ -196,14 +196,15 @@ trait EntrustUserTrait
         return false;
     }
 
-    public function cachedRoles ()
+    public function cachedRoles()
     {
         $userPrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_roles_for_user_' . $this->$userPrimaryKey;
 
-        return Cache::tags( Config::get( 'entrust.role_user_table' ) )->remember( $cacheKey, Option::get( 'acl_cache_expires', 60 ), function () {
-            return $this->roles()->get();
-        } );
+        return Cache::tags( Config::get( 'entrust.role_user_table' ) )
+                    ->remember( $cacheKey, Option::get( 'acl_cache_expires', 60 ), function() {
+                        return $this->roles()->get();
+                    } );
     }
 
     /**
@@ -211,7 +212,7 @@ trait EntrustUserTrait
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function roles ()
+    public function roles()
     {
         return $this->belongsToMany( Config::get( 'entrust.role' ), Config::get( 'entrust.role_user_table' ), Config::get( 'entrust.user_foreign_key' ), Config::get( 'entrust.role_foreign_key' ) );
     }
@@ -221,7 +222,7 @@ trait EntrustUserTrait
      *
      * @param mixed $roles
      */
-    public function attachRoles ( $roles )
+    public function attachRoles( $roles )
     {
         foreach ( $roles as $role ) {
             $this->attachRole( $role );
@@ -233,7 +234,7 @@ trait EntrustUserTrait
      *
      * @param mixed $role
      */
-    public function attachRole ( $role )
+    public function attachRole( $role )
     {
         if ( is_object( $role ) ) {
             $role = $role->getKey();
@@ -251,10 +252,11 @@ trait EntrustUserTrait
      *
      * @param mixed $roles
      */
-    public function detachRoles ( $roles = null )
+    public function detachRoles( $roles = null )
     {
-        if ( ! $roles )
+        if ( ! $roles ) {
             $roles = $this->roles()->get();
+        }
 
         foreach ( $roles as $role ) {
             $this->detachRole( $role );
@@ -266,7 +268,7 @@ trait EntrustUserTrait
      *
      * @param mixed $role
      */
-    public function detachRole ( $role )
+    public function detachRole( $role )
     {
         if ( is_object( $role ) ) {
             $role = $role->getKey();

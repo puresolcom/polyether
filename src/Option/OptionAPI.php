@@ -14,13 +14,13 @@ class OptionAPI
     protected $cached = [ ];
     protected $notoption = [ ];
 
-    public function __construct ( OptionRepository $option )
+    public function __construct( OptionRepository $option )
     {
         $this->option = $option;
         $this->autoloadOptions();
     }
 
-    public function autoloadOptions ()
+    public function autoloadOptions()
     {
         $cacheKey = 'options_autoload';
 
@@ -38,13 +38,14 @@ class OptionAPI
         }
     }
 
-    public function get ( $name, $default = false )
+    public function get( $name, $default = false )
     {
         $cacheKey = 'option_' . md5( $name );
 
         if ( isset( $this->notoption[ $name ] ) ) {
-            if ( $default )
+            if ( $default ) {
                 return $default;
+            }
 
             return false;
         }
@@ -65,8 +66,9 @@ class OptionAPI
                 Cache::tags( 'options' )->put( $cacheKey, $value, $this->get( 'options_cache_expires', 60 ) );
             } else {
                 $this->notoption[ $name ] = true;
-                if ( $default )
+                if ( $default ) {
                     return $default;
+                }
 
                 return false;
             }
@@ -79,32 +81,35 @@ class OptionAPI
         return $value;
     }
 
-    protected function getCached ( $name )
+    protected function getCached( $name )
     {
         return isset( $this->cached[ $name ] ) ? $this->cached[ $name ] : false;
     }
 
-    protected function cache ( $name, $value )
+    protected function cache( $name, $value )
     {
         $this->cached[ $name ] = $value;
     }
 
-    public function isJSON ( $string )
+    public function isJSON( $string )
     {
         return is_string( $string ) && is_array( json_decode( $string, true ) ) && ( json_last_error() == JSON_ERROR_NONE ) ? true : false;
     }
 
-    public function set ( $name, $value, $autoload = 'yes' )
+    public function set( $name, $value, $autoload = 'yes' )
     {
 
-        if ( true === $autoload )
+        if ( true === $autoload ) {
             $autoload = 'yes';
+        }
 
-        if ( false === $autoload )
+        if ( false === $autoload ) {
             $autoload = 'no';
+        }
 
-        if ( is_array( $value ) || is_object( $value ) )
+        if ( is_array( $value ) || is_object( $value ) ) {
             $value = json_encode( $value, JSON_UNESCAPED_UNICODE );
+        }
 
         if ( $this->option->create( [ 'option_name' => $name, 'option_value' => $value, 'autoload' => $autoload ] ) ) {
 
@@ -118,23 +123,27 @@ class OptionAPI
         return false;
     }
 
-    public function update ( $name, $value, $autoload = null )
+    public function update( $name, $value, $autoload = null )
     {
 
-        if ( true === $autoload )
+        if ( true === $autoload ) {
             $autoload = 'yes';
+        }
 
-        if ( false === $autoload )
+        if ( false === $autoload ) {
             $autoload = 'no';
+        }
 
-        if ( is_array( $value ) || is_object( $value ) )
+        if ( is_array( $value ) || is_object( $value ) ) {
             $value = json_encode( $value, JSON_UNESCAPED_UNICODE );
+        }
 
 
         $updated_options = [ 'option_name' => $name, 'option_value' => $value ];
 
-        if ( $autoload !== null )
+        if ( $autoload !== null ) {
             $updated_options[ 'autoload' ] = $autoload;
+        }
 
         if ( $this->option->updateOrCreate( [ 'option_name' => $name ], $updated_options ) ) {
             Cache::tags( 'options' )->forget( 'option_' . md5( $name ) );

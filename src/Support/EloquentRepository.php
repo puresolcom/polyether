@@ -7,7 +7,7 @@ use Datatables;
 
 abstract class EloquentRepository extends Repository
 {
-    public function sluggable ( $sluggable, $slug_col )
+    public function sluggable( $sluggable, $slug_col )
     {
         $slug = $this->createSlug( $sluggable );
 
@@ -16,12 +16,12 @@ abstract class EloquentRepository extends Repository
         return $count ? "{$sluggable}-{$count}" : $slug;
     }
 
-    public function createSlug ( $sluggable )
+    public function createSlug( $sluggable )
     {
         return app( 'Illuminate\Support\Str' )->slug( $sluggable );
     }
 
-    public function findWhereFirst ( $where, $columns = [ '*' ], $or = false )
+    public function findWhereFirst( $where, $columns = [ '*' ], $or = false )
     {
         parent::applyCriteria();
 
@@ -46,17 +46,17 @@ abstract class EloquentRepository extends Repository
         return $model->get( $columns )->first();
     }
 
-    public function findOrFail ( $id, $columns = [ '*' ] )
+    public function findOrFail( $id, $columns = [ '*' ] )
     {
         return $this->model->findOrFail( $id, $columns );
     }
 
-    public function where ( $field, $operator, $value )
+    public function where( $field, $operator, $value )
     {
         return $this->model->where( $field, $operator, $value );
     }
 
-    public function countWhere ( $where, $or = false )
+    public function countWhere( $where, $or = false )
     {
         $this->applyCriteria();
 
@@ -81,7 +81,7 @@ abstract class EloquentRepository extends Repository
         return $model->count();
     }
 
-    public function findWith ( $id, array $with, $columns = [ '*' ] )
+    public function findWith( $id, array $with, $columns = [ '*' ] )
     {
         $model = $this->model->find( $id, $columns );
         $model = $this->parseQuery( [ 'with' => $with ], $model );
@@ -89,11 +89,12 @@ abstract class EloquentRepository extends Repository
         return $model->first();
     }
 
-    public function parseQuery ( $args, $model = null )
+    public function parseQuery( $args, $model = null )
     {
 
-        if ( ! $model )
+        if ( ! $model ) {
             $model = $this->model;
+        }
 
         if ( isset( $args[ 'has' ] ) && is_array( $args[ 'has' ] ) ) {
             $has = $args[ 'has' ];
@@ -102,8 +103,9 @@ abstract class EloquentRepository extends Repository
                 if ( is_string( $_has ) ) {
                     $model = $model->has( $_has );
                 } elseif ( is_array( $_has ) && ! empty( $_has ) ) {
-                    if ( isset( $_has[ 'operator' ], $_has[ 'count' ] ) )
+                    if ( isset( $_has[ 'operator' ], $_has[ 'count' ] ) ) {
                         $model = $model->has( (string)$key, $_has[ 'operator' ], $_has[ 'count' ] );
+                    }
                 } else {
                     continue;
                 }
@@ -118,7 +120,7 @@ abstract class EloquentRepository extends Repository
 
                 if ( is_array( $_whereHas ) && ! empty( $_whereHas ) ) {
                     if ( is_string( $key ) ) {
-                        $model = $model->whereHas( (string)$key, function ( $q ) use ( $_whereHas ) {
+                        $model = $model->whereHas( (string)$key, function( $q ) use ( $_whereHas ) {
                             $this->queryClause( $_whereHas, $q );
                         } );
                     }
@@ -136,7 +138,7 @@ abstract class EloquentRepository extends Repository
 
                 if ( is_array( $_orWhereHas ) && ! empty( $_orWhereHas ) ) {
                     if ( is_string( $key ) ) {
-                        $model = $model->orWhereHas( $key, function ( $q ) use ( $_orWhereHas ) {
+                        $model = $model->orWhereHas( $key, function( $q ) use ( $_orWhereHas ) {
                             $this->queryClause( $_orWhereHas, $q );
                         } );
                     }
@@ -153,7 +155,7 @@ abstract class EloquentRepository extends Repository
                 if ( is_string( $_with ) ) {
                     $model = $model->with( $_with );
                 } elseif ( is_array( $_with ) && ! empty( $_with ) ) {
-                    $model = $model->with( [ (string)$key => function ( $q ) use ( $_with, $model ) {
+                    $model = $model->with( [ (string)$key => function( $q ) use ( $_with, $model ) {
                         $this->parseQuery( $_with, $q );
                     } ] );
                 } else {
@@ -163,8 +165,9 @@ abstract class EloquentRepository extends Repository
         }
 
         if ( isset( $args[ 'columns' ] ) ) {
-            if ( ! is_array( $args[ 'columns' ] ) )
+            if ( ! is_array( $args[ 'columns' ] ) ) {
                 $args[ 'columns' ] = (array)$args[ 'columns' ];
+            }
 
             $columns = $args[ 'columns' ];
             $model = $model->select( $columns );
@@ -172,7 +175,7 @@ abstract class EloquentRepository extends Repository
 
         if ( isset( $args[ 'query' ] ) ) {
             $queries = $this->sanitizeQuery( $args[ 'query' ] );
-            $model = $model->where( function ( $q ) use ( $queries ) {
+            $model = $model->where( function( $q ) use ( $queries ) {
                 $this->queryClause( $queries, $q );
             } );
         }
@@ -185,7 +188,7 @@ abstract class EloquentRepository extends Repository
      *
      * @return array
      */
-    public function sanitizeQuery ( $queries )
+    public function sanitizeQuery( $queries )
     {
         $cleanQueries = array();
 
@@ -253,7 +256,7 @@ abstract class EloquentRepository extends Repository
      * @param  Builder $q
      * @param  int     $depth
      */
-    public function queryClause ( $queries, &$q, $depth = 0 )
+    public function queryClause( $queries, &$q, $depth = 0 )
     {
         $i = 0;
         foreach ( $queries as $key => $query ) {
@@ -264,7 +267,7 @@ abstract class EloquentRepository extends Repository
                 // That happens when a non-nested query found on the first iteration
                 // in that case we the clause should be AND
                 $relation = ( 0 === $i ) ? 'AND' : $queries[ 'relation' ];
-                $q->where( function ( $q ) use ( $query ) {
+                $q->where( function( $q ) use ( $query ) {
 
                     if ( isset( $query[ 'value' ] ) ) {
                         if ( isset( $query[ 'compare' ] ) ) {
@@ -304,7 +307,7 @@ abstract class EloquentRepository extends Repository
                 // else we should use the provided relation
                 $relation = ( 1 === $depth && 0 === $i ) ? 'AND' : $queries[ 'relation' ];
 
-                $q->where( function ( $q ) use ( $query, $depth ) {
+                $q->where( function( $q ) use ( $query, $depth ) {
                     $this->queryClause( $query, $q, $depth );
                 }, null, null, $relation );
             } else {
@@ -319,17 +322,13 @@ abstract class EloquentRepository extends Repository
      *
      * @return bool
      */
-    protected function isFirstOrderClause ( $query )
+    protected function isFirstOrderClause( $query )
     {
         return isset( $query[ 'column' ] ) && isset( $query[ 'value' ] );
     }
 
-    public function update ( array $data, $id )
-    {
-        return $this->model->find( $id )->update( $data );
-    }
 
-    public function paginate ( $perPage = 20, $columns = array( '*' ) )
+    public function paginate( $perPage = 20, $columns = array( '*' ) )
     {
         return parent::paginate( $perPage, $columns );
     }
@@ -339,10 +338,10 @@ abstract class EloquentRepository extends Repository
      *
      * @return mixed
      */
-    public function dataTable ( $args )
+    public function dataTable( $args, $model = null )
     {
-        $model = $this->parseQuery( $args );
-        $dataTables = Datatables::of( $model->get() );
+        $model = $this->parseQuery( $args, $model );
+        $dataTables = Datatables::of( $model );
 
         return $dataTables;
     }

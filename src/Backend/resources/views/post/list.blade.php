@@ -11,7 +11,3 @@
         </div>
     </div>
 @stop
-@section('scripts')
-    @parent
-    {!! $datatable_js !!}
-@stop

@@ -11,7 +11,7 @@ class TermTaxonomyRelationships extends Model
     protected $table = 'term_relationships';
     protected $fillable = [ 'object_id', 'term_taxonomy_id' ];
 
-    public function termTaxonomies ()
+    public function termTaxonomies()
     {
         return $this->belongsTo( TermTaxonomy::class, 'term_taxonomy_id', 'id' );
     }

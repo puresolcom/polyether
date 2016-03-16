@@ -35,7 +35,7 @@ class Post
      *
      * @return void
      */
-    public function __construct ( PostRepository $postRepository )
+    public function __construct( PostRepository $postRepository )
     {
         $this->postRepository = $postRepository;
 
@@ -49,18 +49,20 @@ class Post
      * Registering initial post types
      * @return void;
      */
-    private function registerDefaultPostTypes ()
+    private function registerDefaultPostTypes()
     {
-        $this->registerPostType( 'post', [ 'labels'       => [ 'name' => 'Posts', 'singular' => 'Post', ],
-                                           'hierarchical' => false, 'show_ui' => true, 'icon' => 'fa fa-pencil',
-                                           'permissions'  => [ '*_posts' ], '_built_in' => true, ] );
+        $this->registerPostType( 'post', [ 'labels'        => [ 'name' => 'Posts', 'singular' => 'Post', ],
+                                           'hierarchical'  => false, 'show_ui' => true, 'icon' => 'fa fa-pencil',
+                                           'menu_position' => 2, 'permissions' => [ '*_posts' ],
+                                           '_built_in'     => true, ] );
 
         $this->registerPostType( 'page', [ 'labels'      => [ 'name' => 'Pages', 'singular' => 'Page', ],
                                            'permissions' => [ '*_pages' ], 'hierarchical' => true, 'show_ui' => true,
-                                           'icon'        => 'fa fa-file', '_built_in' => true, ] );
+                                           'icon'        => 'fa fa-file', 'menu_position' => 3,
+                                           '_built_in'   => true, ] );
     }
 
-    private function coreHookHandlers ()
+    private function coreHookHandlers()
     {
         Plugin::add_action( 'post_status_changed', [ $this, 'postStatusUpdated' ], 1, 3 );
     }
@@ -73,25 +75,28 @@ class Post
      *
      * @return void|EtherError
      */
-    public function registerPostType ( $post_type, $args = array() )
+    public function registerPostType( $post_type, $args = array() )
     {
 
-        if ( $this->postTypeObjectExists( $post_type ) )
+        if ( $this->postTypeObjectExists( $post_type ) ) {
             return new EtherError( 'Post type with the same name already exists' );
+        }
 
         // Args prefixed with an underscore are reserved for internal use.
         $defaults = [ 'labels'             => [ 'name' => 'Posts', 'singular' => 'Post', ], 'description' => '',
                       'show_ui'            => true, 'show_in_admin_menu' => null, 'show_in_nav_menu' => null,
                       'icon'               => null, 'hierarchical' => false, 'taxonomies' => [ ], 'permissions' => [ ],
-                      '_built_in'          => false ];
+                      'menu_position'      => null, '_built_in' => false ];
 
         $args = array_merge( $defaults, $args );
 
-        if ( null === $args[ 'show_in_admin_menu' ] )
+        if ( null === $args[ 'show_in_admin_menu' ] ) {
             $args[ 'show_in_admin_menu' ] = $args[ 'show_ui' ];
+        }
 
-        if ( null === $args[ 'show_in_nav_menu' ] )
+        if ( null === $args[ 'show_in_nav_menu' ] ) {
             $args[ 'show_in_nav_menu' ] = $args[ 'show_ui' ];
+        }
 
 
         $args = (object)$args;
@@ -116,7 +121,7 @@ class Post
      *
      * @return bool
      */
-    public function postTypeObjectExists ( $post_type )
+    public function postTypeObjectExists( $post_type )
     {
         return isset( $this->postTypes[ $post_type ] );
     }
@@ -128,10 +133,11 @@ class Post
      *
      * @return false|\stdClass
      */
-    public function getPostTypeObject ( $post_type )
+    public function getPostTypeObject( $post_type )
     {
-        if ( ! isset( $this->postTypes[ $post_type ] ) )
+        if ( ! isset( $this->postTypes[ $post_type ] ) ) {
             return false;
+        }
 
         return $this->postTypes[ $post_type ];
     }
@@ -139,7 +145,7 @@ class Post
     /**
      * @return array
      */
-    public function getPostTypes ()
+    public function getPostTypes()
     {
         return $this->postTypes;
     }
@@ -151,11 +157,12 @@ class Post
      *
      * @return integer|EtherError|null
      */
-    public function create ( $postArr )
+    public function create( $postArr )
     {
 
-        if ( ! \Auth::check() )
+        if ( ! \Auth::check() ) {
             return null;
+        }
 
         $userId = \Auth::user()->id;
 
@@ -165,8 +172,9 @@ class Post
 
         $postArr = array_unique( array_merge( $default, $postArr ) );
 
-        if ( empty( $postArr[ 'post_title' ] ) )
+        if ( empty( $postArr[ 'post_title' ] ) ) {
             return new EtherError( 'Post title must be provided' );
+        }
 
         $postArr[ 'post_slug' ] = $this->postRepository->sluggable( $postArr[ 'post_title' ], 'post_slug' );
 
@@ -185,11 +193,12 @@ class Post
      *
      * @return integer|EtherError|null
      */
-    public function update ( $postId, $postArr )
+    public function update( $postId, $postArr )
     {
 
-        if ( ! $postBeforeUpdate = $this->find( $postId, [ 'id', 'post_status' ] ) )
+        if ( ! $postBeforeUpdate = $this->find( $postId, [ 'id', 'post_status' ] ) ) {
             return false;
+        }
 
         try {
             $post = $this->postRepository->update( $postArr, $postId );
@@ -213,7 +222,7 @@ class Post
      *
      * @return \Illuminate\Support\Collection||null
      */
-    public function find ( $postId, $columns = [ '*' ] )
+    public function find( $postId, $columns = [ '*' ] )
     {
         $cache_key = ( is_array( $columns ) && $columns[ 0 ] == '*' ) ? 'post_' . md5( $postId ) : 'post_' . md5( $postId . http_build_query( $columns ) );
 
@@ -225,8 +234,8 @@ class Post
             try {
                 $post = $this->postRepository->findOrFail( $postId, $columns );
                 // Cache it using the caching system
-                Cache::tags( [ 'posts',
-                               'post_' . $postId ] )->put( $cache_key, $post, \Option::get( 'posts_cache_expires', 60 ) );
+                Cache::tags( [ 'posts', 'post_' . $postId ] )
+                     ->put( $cache_key, $post, \Option::get( 'posts_cache_expires', 60 ) );
 
                 return $post;
             } catch ( \Exception $e ) {
@@ -240,7 +249,7 @@ class Post
      *
      * @return Collection|\Polyether\Support\EtherError
      */
-    public function query ( $args = [ ] )
+    public function query( $args = [ ] )
     {
         $defaults = [ 'orderby'       => 'id', 'order' => 'DESC',
                       'paginate'      => Option::get( 'default_posts_paginate', 20 ), 'cat_in' => [ ], //ids
@@ -261,8 +270,9 @@ class Post
         } else {
             $posts = $this->postRepository->queryPosts( $args );
 
-            if ( ! count( $posts ) > 0 )
+            if ( ! count( $posts ) > 0 ) {
                 return new EtherError( 'No Posts were found' );
+            }
 
             Cache::tags( 'posts' )->put( $cache_key, $posts, \Option::get( 'posts_cache_expires', 60 ) );
 
@@ -271,7 +281,7 @@ class Post
         return $posts;
     }
 
-    public function postStatusUpdated ( $postId, $newStatus, $oldStatus )
+    public function postStatusUpdated( $postId, $newStatus, $oldStatus )
     {
         if ( $newStatus != $oldStatus ) {
             if ( ! empty( $terms = $this->postRepository->getTermTaxonomies( $postId )->toArray() ) ) {

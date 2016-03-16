@@ -1,0 +1,16 @@
+.hierarchical-taxonomy-wrapper {
+  .taxonomy-list {
+    padding: 0;
+  }
+  li {
+    list-style: none;
+  }
+}
+
+.dataTable .datatable-actions > * {
+  display: inline-block;
+  margin-right: 5px;
+  &:last-child {
+    margin-right: 0;
+  }
+}

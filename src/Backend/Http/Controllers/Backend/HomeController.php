@@ -6,7 +6,7 @@ use View;
 
 class HomeController extends Controller
 {
-    public function getIndex ()
+    public function getIndex()
     {
         return View::make( 'backend::home' );
     }

@@ -26,7 +26,7 @@ class PasswordController extends Controller
      *
      * @return void
      */
-    public function __construct ()
+    public function __construct()
     {
         $this->middleware( 'guest' );
     }
@@ -36,7 +36,7 @@ class PasswordController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getEmail ()
+    public function getEmail()
     {
         $page_title = "Recover password";
 

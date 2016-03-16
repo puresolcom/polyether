@@ -7,14 +7,14 @@ use Illuminate\Support\ServiceProvider;
 class PostServiceProvider extends ServiceProvider
 {
 
-    public function boot ()
+    public function boot()
     {
 
     }
 
-    public function register ()
+    public function register()
     {
-        $this->app->singleton( 'Post', function ( $app ) {
+        $this->app->singleton( 'Post', function( $app ) {
             return new Post( $app->make( 'Polyether\Post\Repositories\PostRepository' ) );
         } );
     }

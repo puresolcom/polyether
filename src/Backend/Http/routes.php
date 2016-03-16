@@ -1,6 +1,6 @@
 <?php
 
-Route::group( [ 'middleware' => [ 'web' ], 'namespace' => 'Polyether\Backend\Http\Controllers' ], function () {
+Route::group( [ 'middleware' => [ 'web' ], 'namespace' => 'Polyether\Backend\Http\Controllers' ], function() {
     // Authentication routes...
     Route::get( 'login', [ 'as' => 'login', 'uses' => 'Auth\AuthController@getLogin' ] );
     Route::post( 'login', [ 'as' => 'loginPost', 'uses' => 'Auth\AuthController@postLogin' ] );
@@ -15,11 +15,28 @@ Route::group( [ 'middleware' => [ 'web' ], 'namespace' => 'Polyether\Backend\Htt
     Route::get( 'password/reset/{token}', [ 'as' => 'reset_password', 'uses' => 'Auth\PasswordController@getReset' ] );
     Route::post( 'password/reset', [ 'as' => 'reset_passwordPost', 'uses' => 'Auth\PasswordController@postReset' ] );
 
-    Route::group( [ 'prefix' => 'dashboard', 'middleware' => 'auth', ], function () {
+    Route::group( [ 'prefix' => 'dashboard', 'middleware' => 'auth', ], function() {
         Route::get( '/', [ 'as' => 'dashboardHome', 'uses' => 'Backend\HomeController@getIndex' ] );
+        Route::get( 'users', [ 'as' => 'user_manage', 'uses' => 'Backend\UserController@getIndex' ] );
+        Route::post( 'taxonomy/ajax/{taxonomy_name}/datatables_data', [ 'as'   => 'taxonomy_datatables_resultPost',
+                                                                        'uses' => 'Backend\TaxonomyController@postGetTaxonomyDataTableResult' ] );
+        Route::post( 'taxonomy/ajax/term/delete', [ 'as'   => 'taxonomy_term_deletePost',
+                                                    'uses' => 'Backend\TaxonomyController@postAjaxDeleteTerm' ] );
+        Route::put( 'taxonomy/edit/{taxonomy}/{term_id}', [ 'as'   => 'term_taxonomy_editPut',
+                                                            'uses' => 'Backend\TaxonomyController@putEditTerm' ] );
+        Route::get( 'taxonomy/edit/{taxonomy}/{term_id}', [ 'as'   => 'term_taxonomy_edit',
+                                                            'uses' => 'Backend\TaxonomyController@getEditTerm' ] );
+        Route::get( 'taxonomy/{taxonomy_name}', [ 'as'   => 'taxonomy_home',
+                                                  'uses' => 'Backend\TaxonomyController@getIndex' ] );
+        Route::post( 'taxonomy/{taxonomy_name}/new', [ 'as'   => 'taxonomy_term_new',
+                                                       'uses' => 'Backend\TaxonomyController@postAddTerm' ] );
 
 
-        Route::group( [ 'prefix' => 'pt' ], function () {
+        Route::post( 'ajax/{action_name}', [ 'as' => 'ajax_backend', 'uses' => function( $actionName ) {
+            Backend::processAjax( $actionName );
+        } ] );
+
+        Route::group( [ 'prefix' => 'pt' ], function() {
 
             Route::get( '{post_type}', [ 'as' => 'post_type_home', 'uses' => 'Backend\PostTypeController@getIndex' ] );
             Route::get( 'edit/{post_id}', [ 'as' => 'post_edit', 'uses' => 'Backend\PostTypeController@getEdit' ] );

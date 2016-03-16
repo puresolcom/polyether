@@ -32,7 +32,7 @@ class MigrationCommand extends Command
      *
      * @return void
      */
-    public function fire ()
+    public function fire()
     {
         $this->laravel->view->addNamespace( 'entrust', substr( __DIR__, 0, -8 ) . 'views' );
 
@@ -73,7 +73,7 @@ class MigrationCommand extends Command
      *
      * @return bool
      */
-    protected function createMigration ( $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable )
+    protected function createMigration( $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable )
     {
         $migrationFile = base_path( "/database/migrations" ) . "/" . date( 'Y_m_d_His' ) . "_entrust_setup_tables.php";
 

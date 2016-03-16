@@ -7,7 +7,7 @@ use Polyether\Support\EloquentRepository;
 
 class UserRepository extends EloquentRepository
 {
-    public function model ()
+    public function model()
     {
         return User::class;
     }

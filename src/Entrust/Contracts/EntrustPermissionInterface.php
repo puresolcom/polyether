@@ -16,5 +16,5 @@ interface EntrustPermissionInterface
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function roles ();
+    public function roles();
 }

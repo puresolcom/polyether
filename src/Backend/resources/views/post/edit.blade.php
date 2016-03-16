@@ -2,7 +2,7 @@
 
 @section('main-content')
     <section class="edit-post">
-        {!! BootForm::open(['model' => $post, 'update' => 'post_editPut', 'method' => 'post']) !!}
+        {!! BootForm::open(['url' => route('post_editPut', $post->id), 'method' => 'put']) !!}
         <div class="row">
             <div class="col-lg-9 col-md-8 col-sm-12">
                 @if (count($errors) > 0)
@@ -23,9 +23,9 @@
                     <!-- form start -->
                     <div class="box-body">
                         <div class="post-title-wrapper">
-                            {!! BootForm::text('post_title', 'Title', null ,['id' => 'title']) !!}
+                            {!! BootForm::text('post[post_title]', 'Title', $post->post_title ,['id' => 'post_title']) !!}
                         </div>
-                        {!! BootForm::textarea('post_content', 'Content', null , ['id' => 'content']) !!}
+                        {!! BootForm::textarea('post[post_content]', 'Content', $post->post_content , ['id' => 'post_content']) !!}
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -45,11 +45,11 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
-                        {!! BootForm::select('post_status', 'Status', ['publish' => 'Published', 'draft' => 'Draft', 'pending' => 'Pending Review']) !!}
+                        {!! BootForm::select('post[post_status]', 'Status', ['publish' => 'Published', 'draft' => 'Draft', 'pending' => 'Pending Review'], $post->post_status) !!}
                         <div class="form-group">
                             <label for="created_at" class="control-label">Published On</label>
                             <div class="input-group date" id="post_created_at_date">
-                                <input type="text" name="created_at"
+                                <input type="text" name="post[created_at]"
                                        value="{!! $post->created_at !!}"
                                        class="form-control">
                                 <div class="input-group-addon">
@@ -66,36 +66,55 @@
                 </div>
                 <!-- /.box -->
 
-                <div class="box box-default">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Categories</h3>
+                @foreach($uiTaxonomies as $taxName=>$taxObj)
+                    <div class="box box-default">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">{{ $taxObj->labels['name'] or str_plural($taxName) }}</h3>
 
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                        class="fa fa-minus"></i>
-                            </button>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                            class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <!-- /.box-tools -->
                         </div>
-                        <!-- /.box-tools -->
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div id="{{$taxName}}_checklist">
+                                @include('backend::post.taxonomy-checklist')
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                        @if ($taxObj->hierarchical)
+                            <div class="box-footer">
+                                <h5 class="toggle-add-taxonomy-term"><a href="#"><i class="fa fa-plus-circle"></i>
+                                        Add {{ ucfirst($taxName) }}</a></h5>
+                                <div class="add-taxonomy-term-wrapper" style="display: none;">
+                                    <div class="form-group">
+                                        <input type="text" name="new{{$taxName}}" data-required="true"
+                                               placeholder="Term name"
+                                               class="form-control">
+                                    </div>
+                                    <div class="input-group input-group-sm">
+                                        <div id="{{$taxName}}_parent_select">
+                                            @include('backend::post.taxonomy-parent-select')
+                                        </div>
+                                        <span class="input-group-btn">
+                                      <button type="button" class="btn btn-info btn-flat"
+                                              id="{{$taxName}}-add-submit">Add
+                                      </button>
+                                    </span>
+                                    </div>
+                                    <br/>
+                                    <div class="ajax-alert">
+
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
-                    <!-- /.box-header -->
-                    <div class="box-body">
-                        {!! Taxonomy::UITerms([
-                                                'orderby'           => 'id',
-                                                'order'             => 'ASC',
-                                                'with_post_counts'  => true,
-                                                'hide_empty'        => false,
-                                                'echo'              => false,
-                                                'hierarchical'      => true,
-                                                'name'              => 'cat',
-                                                'selected'          => array_pluck(Taxonomy::getObjectTerms($post->id, 'category'), 'id'),
-                                                'value_field'       => 'term_id',
-                                                'taxonomy'          => 'category',
-                                                ])
-                        !!}
-                    </div>
-                    <!-- /.box-body -->
-                </div>
                 <!-- /.box -->
+                @endforeach
 
             </div>
         </div>

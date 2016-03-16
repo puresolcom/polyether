@@ -11,7 +11,7 @@ class Term extends Model
     protected $fillable = [ 'name', 'slug' ];
     protected $casts = [ 'id' => 'integer', ];
 
-    public function taxonomies ()
+    public function taxonomies()
     {
         return $this->hasMany( TermTaxonomy::class, 'term_id', 'id' );
     }

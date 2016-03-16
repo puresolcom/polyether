@@ -16,17 +16,17 @@ class TermTaxonomy extends Model
 
     protected $casts = [ 'id' => 'integer', 'term_id' => 'integer', ];
 
-    public function terms ()
+    public function terms()
     {
         return $this->term();
     }
 
-    public function term ()
+    public function term()
     {
         return $this->belongsTo( Term::class, 'term_id', 'id' );
     }
 
-    public function posts ()
+    public function posts()
     {
         return $this->belongsToMany( Post::class, 'term_relationships', 'term_taxonomy_id', 'object_id' );
     }

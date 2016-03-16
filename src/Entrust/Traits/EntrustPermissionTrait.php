@@ -19,11 +19,11 @@ trait EntrustPermissionTrait
      *
      * @return void|bool
      */
-    public static function boot ()
+    public static function boot()
     {
         parent::boot();
 
-        static::deleting( function ( $permission ) {
+        static::deleting( function( $permission ) {
             if ( ! method_exists( Config::get( 'entrust.permission' ), 'bootSoftDeletes' ) ) {
                 $permission->roles()->sync( [ ] );
             }
@@ -37,7 +37,7 @@ trait EntrustPermissionTrait
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function roles ()
+    public function roles()
     {
         return $this->belongsToMany( Config::get( 'entrust.role' ), Config::get( 'entrust.permission_role_table' ) );
     }

@@ -22,11 +22,11 @@ trait EntrustRoleTrait
      *
      * @return void|bool
      */
-    public static function boot ()
+    public static function boot()
     {
         parent::boot();
 
-        static::deleting( function ( $role ) {
+        static::deleting( function( $role ) {
             if ( ! method_exists( Config::get( 'entrust.role' ), 'bootSoftDeletes' ) ) {
                 $role->users()->sync( [ ] );
                 $role->perms()->sync( [ ] );
@@ -36,19 +36,19 @@ trait EntrustRoleTrait
         } );
     }
 
-    public function save ( array $options = [ ] )
+    public function save( array $options = [ ] )
     {   //both inserts and updates
         parent::save( $options );
         Cache::tags( Config::get( 'entrust.permission_role_table' ) )->flush();
     }
 
-    public function delete ( array $options = [ ] )
+    public function delete( array $options = [ ] )
     {   //soft or hard
         parent::delete( $options );
         Cache::tags( Config::get( 'entrust.permission_role_table' ) )->flush();
     }
 
-    public function restore ()
+    public function restore()
     {   //soft delete undo's
         parent::restore();
         Cache::tags( Config::get( 'entrust.permission_role_table' ) )->flush();
@@ -59,7 +59,7 @@ trait EntrustRoleTrait
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function users ()
+    public function users()
     {
         return $this->belongsToMany( Config::get( 'auth.model' ), Config::get( 'entrust.role_user_table' ), Config::get( 'entrust.role_foreign_key' ), Config::get( 'entrust.user_foreign_key' ) );
         // return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust.role_user_table'));
@@ -73,7 +73,7 @@ trait EntrustRoleTrait
      *
      * @return bool
      */
-    public function hasPermission ( $name, $requireAll = false )
+    public function hasPermission( $name, $requireAll = false )
     {
         if ( is_array( $name ) ) {
             foreach ( $name as $permissionName ) {
@@ -101,14 +101,15 @@ trait EntrustRoleTrait
         return false;
     }
 
-    public function cachedPermissions ()
+    public function cachedPermissions()
     {
         $rolePrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_permissions_for_role_' . $this->$rolePrimaryKey;
 
-        return Cache::tags( Config::get( 'entrust.permission_role_table' ) )->remember( $cacheKey, Option::get( 'acl_cache_expires', 60 ), function () {
-            return $this->perms()->get();
-        } );
+        return Cache::tags( Config::get( 'entrust.permission_role_table' ) )
+                    ->remember( $cacheKey, Option::get( 'acl_cache_expires', 60 ), function() {
+                        return $this->perms()->get();
+                    } );
     }
 
     /**
@@ -117,7 +118,7 @@ trait EntrustRoleTrait
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function perms ()
+    public function perms()
     {
         return $this->belongsToMany( Config::get( 'entrust.permission' ), Config::get( 'entrust.permission_role_table' ) );
     }
@@ -129,7 +130,7 @@ trait EntrustRoleTrait
      *
      * @return void
      */
-    public function savePermissions ( $inputPermissions )
+    public function savePermissions( $inputPermissions )
     {
         if ( ! empty( $inputPermissions ) ) {
             $this->perms()->sync( $inputPermissions );
@@ -145,7 +146,7 @@ trait EntrustRoleTrait
      *
      * @return void
      */
-    public function attachPermissions ( $permissions )
+    public function attachPermissions( $permissions )
     {
         foreach ( $permissions as $permission ) {
             $this->attachPermission( $permission );
@@ -159,7 +160,7 @@ trait EntrustRoleTrait
      *
      * @return void
      */
-    public function attachPermission ( $permission )
+    public function attachPermission( $permission )
     {
         if ( is_object( $permission ) ) {
             $permission = $permission->getKey();
@@ -179,7 +180,7 @@ trait EntrustRoleTrait
      *
      * @return void
      */
-    public function detachPermissions ( $permissions )
+    public function detachPermissions( $permissions )
     {
         foreach ( $permissions as $permission ) {
             $this->detachPermission( $permission );
@@ -193,13 +194,15 @@ trait EntrustRoleTrait
      *
      * @return void
      */
-    public function detachPermission ( $permission )
+    public function detachPermission( $permission )
     {
-        if ( is_object( $permission ) )
+        if ( is_object( $permission ) ) {
             $permission = $permission->getKey();
+        }
 
-        if ( is_array( $permission ) )
+        if ( is_array( $permission ) ) {
             $permission = $permission[ 'id' ];
+        }
 
         $this->perms()->detach( $permission );
     }

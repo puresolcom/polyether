@@ -8,7 +8,7 @@ use Flash;
 class HomeController extends Controller
 {
 
-    public function index ()
+    public function index()
     {
         $page_title = "Home";
         $page_description = "This is the home page";

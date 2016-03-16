@@ -7,7 +7,7 @@ use Polyether\Support\EloquentRepository as Repository;
 class UserMetaRepository extends Repository
 {
 
-    public function model ()
+    public function model()
     {
         \Polyether\Meta\Models\UserMeta::class;
     }

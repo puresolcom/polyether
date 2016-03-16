@@ -11,11 +11,11 @@ class MetaQuery
      *
      * @return Builder;
      */
-    public function whereHasUserMeta ( $queries, $model )
+    public function whereHasUserMeta( $queries, $model )
     {
         $queries = $this->sanitizeQuery( $queries );
 
-        return $model->whereHas( 'author.userMeta', function ( $q ) use ( $queries ) {
+        return $model->whereHas( 'author.userMeta', function( $q ) use ( $queries ) {
             $this->metaQueryClause( $queries, $q );
         } );
     }
@@ -25,7 +25,7 @@ class MetaQuery
      *
      * @return array
      */
-    public function sanitizeQuery ( $queries )
+    public function sanitizeQuery( $queries )
     {
         $cleanQueries = array();
 
@@ -101,7 +101,7 @@ class MetaQuery
      * @param  Builder $q
      * @param  int     $depth
      */
-    public function metaQueryClause ( $queries, &$q, $depth = 0 )
+    public function metaQueryClause( $queries, &$q, $depth = 0 )
     {
         $i = 0;
         foreach ( $queries as $key => $query ) {
@@ -112,10 +112,11 @@ class MetaQuery
                 // That happens when a non-nested query found on the first iteration
                 // in that case we the clause should be AND
                 $relation = ( 0 === $i ) ? 'AND' : $queries[ 'relation' ];
-                $q->where( function ( $q ) use ( $query ) {
+                $q->where( function( $q ) use ( $query ) {
 
-                    if ( isset( $query[ 'key' ] ) )
+                    if ( isset( $query[ 'key' ] ) ) {
                         $q->where( 'meta_key', '=', $query[ 'key' ] );
+                    }
 
                     if ( isset( $query[ 'value' ] ) ) {
                         if ( isset( $query[ 'compare' ] ) ) {
@@ -155,7 +156,7 @@ class MetaQuery
                 // else we should use the provided relation
                 $relation = ( 1 === $depth && 0 === $i ) ? 'AND' : $queries[ 'relation' ];
 
-                $q->where( function ( $q ) use ( $query, $depth ) {
+                $q->where( function( $q ) use ( $query, $depth ) {
                     $this->metaQueryClause( $query, $q, $depth );
                 }, null, null, $relation );
             } else {
@@ -170,7 +171,7 @@ class MetaQuery
      *
      * @return bool
      */
-    protected function isFirstOrderClause ( $query )
+    protected function isFirstOrderClause( $query )
     {
         return isset( $query[ 'key' ] ) || isset( $query[ 'value' ] );
     }
@@ -181,11 +182,11 @@ class MetaQuery
      *
      * @return Builder;
      */
-    public function whereHasPostMeta ( $queries, $model )
+    public function whereHasPostMeta( $queries, $model )
     {
         $queries = $this->sanitizeQuery( $queries );
 
-        return $model->whereHas( 'postMeta', function ( $q ) use ( $queries ) {
+        return $model->whereHas( 'postMeta', function( $q ) use ( $queries ) {
             $this->metaQueryClause( $queries, $q );
         } );
     }

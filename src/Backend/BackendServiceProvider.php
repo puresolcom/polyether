@@ -16,13 +16,13 @@ class BackendServiceProvider extends ModuleServiceProvider
     public function register()
     {
         parent::register();
-        $this->app->singleton( 'Backend', Backend::class );
+        $this->app->singleton('Backend', Backend::class);
     }
 
     public function boot()
     {
         parent::boot();
-        $this->app->make( 'Backend' )->onBoot();
+        $this->app->make('Backend')->onBoot();
     }
 
     protected function InitVars()
@@ -30,7 +30,7 @@ class BackendServiceProvider extends ModuleServiceProvider
         $this->namespace = __NAMESPACE__;
         $this->packagePath = __DIR__ . DIRECTORY_SEPARATOR;
         $this->packageName = 'backend';
-        $this->configs = [ 'auth' => 'auth', ];
+        $this->configs = ['auth' => 'auth',];
     }
 
 }

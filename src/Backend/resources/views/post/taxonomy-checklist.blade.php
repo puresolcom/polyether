@@ -6,7 +6,7 @@
     'echo'              => false,
     'hierarchical'      => $taxObj->hierarchical,
     'name'              => "taxonomy[$taxName][]",
-    'selected'          => array_pluck(Taxonomy::getObjectTerms($postId, $taxName), 'id'),
+    'selected'          => isset($postId) ? array_pluck(Taxonomy::getObjectTerms($postId, $taxName), 'id') : 0,
     'value_field'       => 'term_id',
     'taxonomy'          => $taxName,
     ])

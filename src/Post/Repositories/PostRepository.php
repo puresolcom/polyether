@@ -16,19 +16,19 @@ class PostRepository extends Repository
     /**
      * @param null|array $args
      */
-    public function queryPosts( $args = null )
+    public function queryPosts($args = null)
     {
         $model = $this->model;
 
-        if ( isset( $args[ 'user_meta_query' ] ) || isset( $args[ 'post_meta_query' ] ) ) {
+        if (isset($args[ 'user_meta_query' ]) || isset($args[ 'post_meta_query' ])) {
             $metaQuery = new MetaQuery();
         }
 
-        if ( isset( $args[ 'user_meta_query' ] ) ) {
-            $model = $metaQuery->whereHasUserMeta( $args[ 'user_meta_query' ], $model );
+        if (isset($args[ 'user_meta_query' ])) {
+            $model = $metaQuery->whereHasUserMeta($args[ 'user_meta_query' ], $model);
         }
-        if ( isset( $args[ 'post_meta_query' ] ) ) {
-            $model = $metaQuery->whereHasPostMeta( $args[ 'post_meta_query' ], $model );
+        if (isset($args[ 'post_meta_query' ])) {
+            $model = $metaQuery->whereHasPostMeta($args[ 'post_meta_query' ], $model);
         }
 
         return $model->get();
@@ -36,84 +36,84 @@ class PostRepository extends Repository
     }
 
 
-    public function syncTermTaxonomies( $objectId, $termTaxonomyIds )
+    public function syncTermTaxonomies($objectId, $termTaxonomyIds)
     {
-        if ( ! $model = $this->model->find( $objectId, [ 'id' ] ) ) {
+        if ( ! $model = $this->model->find($objectId, ['id'])) {
             return false;
         }
 
-        if ( ! is_array( $termTaxonomyIds ) ) {
+        if ( ! is_array($termTaxonomyIds)) {
             $termTaxonomyIds = (array)$termTaxonomyIds;
         }
 
-        return $model->termTaxonomies()->sync( $termTaxonomyIds );
+        return $model->termTaxonomies()->sync($termTaxonomyIds);
     }
 
-    public function detachTermTaxonomies( $objectId, $termTaxonomyIds )
+    public function detachTermTaxonomies($objectId, $termTaxonomyIds)
     {
-        if ( ! $model = $this->model->find( $objectId, [ 'id' ] ) ) {
+        if ( ! $model = $this->model->find($objectId, ['id'])) {
             return false;
         }
 
-        if ( ! is_array( $termTaxonomyIds ) ) {
+        if ( ! is_array($termTaxonomyIds)) {
             $termTaxonomyIds = (array)$termTaxonomyIds;
         }
 
-        return $model->termTaxonomies()->detach( $termTaxonomyIds );
+        return $model->termTaxonomies()->detach($termTaxonomyIds);
     }
 
-    public function getTermTaxonomies( $postId, $taxonomy = null, $termIds = null )
+    public function getTermTaxonomies($postId, $taxonomy = null, $termIds = null)
     {
-        if ( ! $model = $this->model->select( 'id' )->find( $postId ) ) {
+        if ( ! $model = $this->model->select('id')->find($postId)) {
             return false;
         }
 
         $model = $model->termTaxonomies();
 
-        if ( is_string( $taxonomy ) ) {
-            $model = $model->where( 'taxonomy', '=', $taxonomy );
+        if (is_string($taxonomy)) {
+            $model = $model->where('taxonomy', '=', $taxonomy);
         }
 
-        if ( is_array( $termIds ) ) {
-            $model = $model->whereIn( 'term_id', $termIds );
+        if (is_array($termIds)) {
+            $model = $model->whereIn('term_id', $termIds);
         }
 
 
         return $model->get();
     }
 
-    public function getPostTerms( $postId, $taxonomy = null )
+    public function getPostTerms($postId, $taxonomy = null)
     {
-        $model = $this->model->select( 'id' )->find( $postId )->termTaxonomies()->select( 'term_id' );
+        $model = $this->model->select('id')->find($postId)->termTaxonomies()->select('term_id');
 
-        if ( is_string( $taxonomy ) ) {
-            $model = $model->where( 'taxonomy', '=', $taxonomy );
+        if (is_string($taxonomy)) {
+            $model = $model->where('taxonomy', '=', $taxonomy);
         }
 
-        $model = $model->with( 'terms' )->get()->pluck( 'terms' );
+        $model = $model->with('terms')->get()->pluck('terms');
 
-        if ( ! $model ) {
+        if ( ! $model) {
             return false;
         }
 
         return $model;
     }
 
-    public function removePostTerms( $postId, $termIds, $taxonomy = null )
+    public function removePostTerms($postId, $termIds, $taxonomy = null)
     {
-        if ( ! $model = $this->model->find( $postId, [ 'id' ] ) ) {
+        if ( ! $model = $this->model->find($postId, ['id'])) {
             return false;
         }
 
-        if ( ! is_array( $termIds ) ) {
+        if ( ! is_array($termIds)) {
             $termIds = (array)$termIds;
         }
 
-        $ttIds = $model->termTaxonomies()->whereIn( 'term_id', $termIds )->get( [ 'term_taxonomy.id', 'term_id' ] )
-                       ->pluck( 'id' )->toArray();
+        $ttIds = $model->termTaxonomies()->whereIn('term_id', $termIds)->get(['term_taxonomy.id', 'term_id'])
+                       ->pluck('id')->toArray();
 
-        if ( ! empty( $ttIds ) ) {
-            $detach = $model->termTaxonomies()->detach( $ttIds );
+        if ( ! empty($ttIds)) {
+            $detach = $model->termTaxonomies()->detach($ttIds);
         } else {
             return 0;
         }

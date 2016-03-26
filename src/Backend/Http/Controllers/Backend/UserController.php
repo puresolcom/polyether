@@ -3,167 +3,165 @@
 namespace Polyether\Backend\Http\Controllers\Backend;
 
 use Auth;
-use Illuminate\Http\Request;
 use Plugin;
 use Polyether\Support\DataTable;
-use Polyether\Support\EtherError;
-use Post;
-use Taxonomy;
+use Polyether\User\Repositories\UserRepository;
+use Request;
+use UserGate;
 
 class UserController extends BackendController
 {
+    protected $userRepository;
 
-    public function __construct()
+    public function __construct(UserRepository $userRepository)
     {
+        $this->userRepository = $userRepository;
     }
 
     public function getIndex()
     {
 
-        return 'test';
+        if ( ! Auth::user()->can('*_users')) {
+            abort(403);
+        }
 
-        $postType = Post::getPostTypeObject( $postType );
+        $data[ 'title' ] = 'Users';
+        $data[ 'header_title' ] = $data[ 'title' ] . ' List';
+        $data[ 'header_description' ] = 'Browse, sort and manage ' . $data[ 'title' ];
 
-        if ( $postType ) {
-            $perm = '*_' . str_plural( $postType->name );
-            if ( ! Auth::user()->can( $perm ) ) {
-                abort( 403 );
+        $dataTable = new DataTable('users_list', route('user_dataTables_resultPost'));
+        $dataTable->addColumns([
+            ['data' => 'id', 'name' => 'id', 'label' => 'ID',],
+            ['data' => 'username', 'name' => 'username', 'label' => 'Username',],
+            ['data' => 'first_name', 'name' => 'first_name', 'label' => 'First Name',],
+            ['data' => 'last_name', 'name' => 'last_name', 'label' => 'Last Name',],
+            ['data' => 'email', 'name' => 'email', 'label' => 'E-Mail',],
+            ['data' => 'enabled', 'name' => 'enabled', 'label' => 'Enabled',],
+            ['data' => 'created_at', 'name' => 'created_at', 'label' => 'Registered On'],
+            [
+                'data'       => 'actions',
+                'name'       => 'actions',
+                'label'      => 'Actions',
+                'orderable'  => false,
+                'searchable' => false,
+            ],
+        ]);
+        $dataTable->setPerPage(20);
+
+        $data[ 'datatable_html' ] = $dataTable->getDataTablesHtml();
+
+        Plugin::add_action('ether_backend_foot', function () use ($dataTable) {
+            echo $dataTable->getDataTablesJs('backend::user.datatables-js');
+        }, 1501);
+
+        return view('backend::post.list', $data);
+    }
+
+    public function postGetUserDataTableResult()
+    {
+        if ( ! Auth::user()->can('*_users')) {
+            abort(403);
+        }
+
+
+        $args = [
+            'columns' => ['id', 'username', 'first_name', 'last_name', 'email', 'enabled', 'created_at'],
+        ];
+
+        $dataTables = $this->userRepository->dataTable($args);
+
+        $dataTables->editColumn('enabled', function ($value) {
+            if (0 == $value->enabled) {
+                return 'No';
             }
 
-            $data[ 'title' ] = isset( $postType->labels[ 'name' ] ) ? $postType->labels[ 'name' ] : str_plural( $postType->name );
-            $data[ 'header_title' ] = $data[ 'title' ] . ' List';
-            $data[ 'header_description' ] = 'Browse, sort and manage all ' . $data[ 'title' ];
+            return 'Yes';
+        });
 
-            $dataTable = new DataTable( 'post_type_' . $postType->name, route( 'post_type_dataTables_resultPost', $postType->name ) );
-            $dataTable->addColumns( [ [ 'data' => 'id', 'name' => 'id', 'label' => 'ID', ],
-                                      [ 'data' => 'post_title', 'name' => 'post_title', 'label' => 'Title', ],
-                                      [ 'data' => 'post_status', 'name' => 'post_status', 'label' => 'Status', ],
-                                      [ 'data' => 'created_at', 'name' => 'created_at', 'label' => 'Created at', ],
-                                      [ 'data' => 'updated_at', 'name' => 'updated_at', 'label' => 'Updated at', ],
-                                      [ 'data'      => 'actions', 'name' => 'actions', 'label' => 'Actions',
-                                        'orderable' => false, 'searchable' => false, ], ] );
-            $dataTable->setPerPage( 20 );
+        $dataTables->addColumn('actions', function ($user) {
 
-            $data[ 'datatable_html' ] = $dataTable->getDataTablesHtml();
-            $data[ 'datatable_js' ] = $dataTable->getDataTablesJs();
+            $output = '<div class="datatable-actions">';
 
-            return view( 'backend::post.list', $data );
+            if (Auth::user()->can('edit_users')) {
+                $output .= '<a href="' . route('user_edit',
+                        $user->id) . '" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
+            }
 
-        }
+            if (Auth::user()->can('delete_users')) {
+                $output .= '<button class="delete-user-btn btn btn-xs btn-danger" data-user-id="' . $user->id . '"><i class="glyphicon glyphicon-remove"></i> Delete</button>';
+            }
 
-        abort( 404 );
+            $output .= '</div>';
 
+            return $output;
+        });
+
+
+        return $dataTables->make(true);
     }
 
-    public function getCreate( $postType )
+    public function postAjaxDeleteUser()
     {
-        if ( Post::postTypeObjectExists( $postType ) ) {
-            return 'Welcome to ' . $postType . ' add new page';
+        if (Request::ajax() && Request::has(['user_id'])) {
+            $response = [];
+            $delete = UserGate::delete(Request::get('user_id'));
+            if ($delete != 0) {
+                $response[ 'success' ][ 'count' ] = $delete;
+            } else {
+                $response[ 'error' ][] = 'Nothing deleted';
+            }
         } else {
-            abort( 404 );
-        }
-    }
-
-    public function postCreate( $postType, $data )
-    {
-
-    }
-
-    public function getEdit( $postId )
-    {
-        $post = Post::find( $postId, [ 'id', 'post_author', 'post_content', 'post_title', 'post_excerpt', 'post_status',
-                                       'comment_status', 'post_slug', 'post_parent', 'guid', 'menu_order', 'post_type',
-                                       'post_mime_type', 'comment_count', 'created_at' ] );
-        if ( ! $post ) {
-            abort( 404 );
+            return response('Forbidden', 403);
         }
 
+        return response($response);
+    }
 
-        $postType = Post::getPostTypeObject( $post->post_type );
+    public function getEdit($userId)
+    {
+        $user = UserGate::find($userId, [
+            'id',
+            'first_name',
+            'last_name',
+            'username',
+            'email',
+            'created_at',
+            'enabled',
+        ]);
+        if ( ! $user) {
+            abort(404);
+        }
 
-        $postTaxonomies = Taxonomy::getObjectTaxonomies( $post, 'objects' );
+        $data[ 'title' ] = 'Edit User';
+        $data[ 'header_title' ] = 'Users';
+        $data[ 'user' ] = $user;
 
-        $uiTaxonomies = Taxonomy::filterTaxonomies( [ 'show_ui' => true ], $postTaxonomies );
-
-        $data[ 'uiTaxonomies' ] = $uiTaxonomies;
-        $data[ 'header_title' ] = isset( $postType->labels[ 'name' ] ) ? $postType->labels[ 'name' ] : str_plural( ucfirst( $postType->name ) );
-        $data[ 'title' ] = 'Edit ' . ucfirst( $post->post_type );
-        $data[ 'post' ] = $post;
-
-        Plugin::add_action( 'ether_backend_foot', function() {
+        Plugin::add_action('ether_backend_foot', function () {
             echo '<script type="text/javascript">
                         $(function () {
-                            $(\'#post_created_at_date\').datetimepicker(
+                            $(\'#user_created_at_date\').datetimepicker(
                                     {
-                                        "format": "YYYY-MM-DD HH:mm:ss"
+                                        "format": "YYYY-MM-DD HH:mm:ss",
                                     }
                             );
                         });
                     </script>';
-        }, 1 );
+        }, 1501);
 
-        return view( 'backend::post.edit', $data );
+        return view('backend::user.edit', $data);
     }
 
-    public function putEdit( $postId, Request $request )
+    public function putEdit($userId)
     {
-        $postData = $request->except( [ '_method', '_token', 'taxonomy' ] );
-        $taxonomies = $request->get( 'taxonomy' );
+        $userData = Request::get('user');
 
-
-        if ( ! empty( $postData ) ) {
-            $postUpdate = Post::update( $postId, $postData );
-            if ( $postUpdate instanceof EtherError ) {
-                return redirect( route( 'post_edit', $postId ) )->withErrors( $postUpdate );
+        if ( ! empty($userData)) {
+            $userUpdate = UserGate::update($userId, $userData);
+            if ($userUpdate instanceof EtherError) {
+                return redirect(route('user_edit', $userId))->withErrors($userUpdate);
             }
         }
 
-        if ( isset( $taxonomies ) ) {
-            foreach ( $taxonomies as $taxonomy => $terms ) {
-                $terms = array_map( 'intval', $terms );
-                Taxonomy::setObjectTerms( $postId, $terms, $taxonomy );
-            }
-        }
-
-        return redirect( route( 'post_edit', $postId ) )->with( 'success', 'Information updated successfully' );
-    }
-
-    public function postGetPostTypeDataTableResult( $postType )
-    {
-
-        $postType = Post::getPostTypeObject( $postType );
-
-        if ( ! $postType ) {
-            abort( 400 );
-        }
-
-        if ( ! Auth::user()->can( '*_' . str_plural( $postType->name ) ) ) {
-            abort( 403 );
-        }
-
-
-        $args = [ 'columns' => [ 'id', 'post_title', 'post_status', 'created_at', 'updated_at' ],
-                  'query'   => [ [ 'column' => 'post_type', 'value' => e( $postType->name ), ], ], ];
-
-        $dataTables = $this->postRepository->dataTable( $args );
-
-        $dataTables->addColumn( 'actions', function( $post ) use ( $postType ) {
-
-            $output = '';
-
-            if ( Auth::user()->can( 'edit_' . str_plural( $postType->name ) ) ) {
-                $output .= '<a href="' . route( 'post_edit', $post->id ) . '" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
-            }
-
-            return $output;
-        } );
-
-
-        return $dataTables->make( true );
-    }
-
-    private function _taxonomyBodyGenerator( $postType )
-    {
-
+        return redirect(route('user_edit', $userId))->with('success', 'Information updated successfully');
     }
 }

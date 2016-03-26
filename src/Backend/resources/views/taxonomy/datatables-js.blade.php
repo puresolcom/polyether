@@ -19,7 +19,7 @@
         });
 
         $('#{!! $tableSelector !!}').on('click', '.delete-term-btn', function () {
-            c = confirm("Are you sure you want to delete this term?");
+            var c = confirm("Are you sure you want to delete this term?");
 
             if (c !== true)
                 return false;
@@ -42,8 +42,7 @@
                 success: function (data) {
                     if (undefined != data.success) {
                         row.remove();
-                        (undefined != data.success.replaces)
-                        {
+                        if (undefined != data.success.replaces) {
                             $.each(data.success.replaces, function (id, value) {
                                 $('#' + id).html(value);
                             });

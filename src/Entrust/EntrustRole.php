@@ -29,10 +29,10 @@ class EntrustRole extends Model implements EntrustRoleInterface
      *
      * @param array $attributes
      */
-    public function __construct( array $attributes = [ ] )
+    public function __construct(array $attributes = [])
     {
-        parent::__construct( $attributes );
-        $this->table = Config::get( 'entrust.roles_table' );
+        parent::__construct($attributes);
+        $this->table = Config::get('entrust.roles_table');
     }
 
 }

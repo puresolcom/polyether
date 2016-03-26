@@ -14,9 +14,9 @@ class PostServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->singleton( 'Post', function( $app ) {
-            return new Post( $app->make( 'Polyether\Post\Repositories\PostRepository' ) );
-        } );
+        $this->app->singleton('Post', function ($app) {
+            return new Post($app->make('Polyether\Post\Repositories\PostRepository'));
+        });
     }
 
 }

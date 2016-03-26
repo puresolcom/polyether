@@ -9,7 +9,7 @@ class UserMetaRepository extends Repository
 
     public function model()
     {
-        \Polyether\Meta\Models\UserMeta::class;
+        return \Polyether\Meta\Models\UserMeta::class;
     }
 
 }

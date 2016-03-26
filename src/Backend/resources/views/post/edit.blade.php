@@ -2,22 +2,13 @@
 
 @section('main-content')
     <section class="edit-post">
+        @include('backend::layouts.partials.session_messages')
         {!! BootForm::open(['url' => route('post_editPut', $post->id), 'method' => 'put']) !!}
         <div class="row">
             <div class="col-lg-9 col-md-8 col-sm-12">
-                @if (count($errors) > 0)
-                    <div class="alert alert-danger">
-                        <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Edit {{ ucfirst($post->post_type) }}</h3>
+                        <h3 class="box-title">{{ $title }}</h3>
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
@@ -25,7 +16,7 @@
                         <div class="post-title-wrapper">
                             {!! BootForm::text('post[post_title]', 'Title', $post->post_title ,['id' => 'post_title']) !!}
                         </div>
-                        {!! BootForm::textarea('post[post_content]', 'Content', $post->post_content , ['id' => 'post_content']) !!}
+                        {!! Backend::renderContentEditor('post[post_content]', 'Content', $post->post_content , ['id' => 'post_content', 'class' => 'post-content-editor']) !!}
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -113,7 +104,7 @@
                             </div>
                         @endif
                     </div>
-                <!-- /.box -->
+                    <!-- /.box -->
                 @endforeach
 
             </div>

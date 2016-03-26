@@ -9,6 +9,6 @@ class PostMeta extends Model
 
     protected $table = 'postmeta';
 
-    protected $fillable = [ 'post_id', 'meta_key', 'meta_value' ];
+    protected $fillable = ['post_id', 'meta_key', 'meta_value'];
 
 }

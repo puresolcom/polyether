@@ -20,7 +20,7 @@ class EntrustAbility
      *
      * @param Guard $auth
      */
-    public function __construct( Guard $auth )
+    public function __construct(Guard $auth)
     {
         $this->auth = $auth;
     }
@@ -36,14 +36,14 @@ class EntrustAbility
      *
      * @return mixed
      */
-    public function handle( $request, Closure $next, $roles, $permissions, $validateAll = false )
+    public function handle($request, Closure $next, $roles, $permissions, $validateAll = false)
     {
-        if ( $this->auth->guest() || ! $request->user()
-                                               ->ability( explode( '|', $roles ), explode( '|', $permissions ), array( 'validate_all' => $validateAll ) )
+        if ($this->auth->guest() || ! $request->user()->ability(explode('|', $roles), explode('|', $permissions),
+                    array('validate_all' => $validateAll))
         ) {
-            abort( 403 );
+            abort(403);
         }
 
-        return $next( $request );
+        return $next($request);
     }
 }

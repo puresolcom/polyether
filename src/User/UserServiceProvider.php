@@ -9,12 +9,12 @@ class UserServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton( 'UserGate', UserGate::class );
+        $this->app->singleton('UserGate', UserGate::class);
     }
 
     public function boot()
     {
-        $this->app->make( 'UserGate' )->onBoot();
+        $this->app->make('UserGate')->onBoot();
     }
 
 }

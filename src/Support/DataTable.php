@@ -13,7 +13,7 @@ class DataTable
     protected $ajaxUrl;
     protected $perPage = 20;
 
-    public function __construct( $tableSelector, $ajaxUrl )
+    public function __construct($tableSelector, $ajaxUrl)
     {
         $this->tableSelector = $tableSelector;
         $this->ajaxUrl = $ajaxUrl;
@@ -23,33 +23,35 @@ class DataTable
 
     private function appendAssets()
     {
-        Asset::container( 'backend_footer' )
-             ->add( 'dataTables-bootstrap-css', 'vendor/backend/plugins/datatables/dataTables.bootstrap.css', 'bootstrap-css' );
-        Asset::container( 'backend_footer' )
-             ->add( 'dataTables-js', 'vendor/backend/plugins/datatables/jquery.dataTables.min.js', 'jquery' );
-        Asset::container( 'backend_footer' )
-             ->add( 'dataTables-bootstrap-js', 'vendor/backend/plugins/datatables/dataTables.bootstrap.min.js', 'jquery' );
+        Asset::container('backend_footer')
+             ->add('dataTables-bootstrap-css', 'vendor/backend/plugins/datatables/dataTables.bootstrap.css',
+                 'bootstrap-css');
+        Asset::container('backend_footer')
+             ->add('dataTables-js', 'vendor/backend/plugins/datatables/jquery.dataTables.min.js', 'jquery');
+        Asset::container('backend_footer')
+             ->add('dataTables-bootstrap-js', 'vendor/backend/plugins/datatables/dataTables.bootstrap.min.js',
+                 'jquery');
     }
 
-    public function setPerPage( $perPage )
+    public function setPerPage($perPage)
     {
-        if ( ! is_numeric( $perPage ) ) {
+        if ( ! is_numeric($perPage)) {
             return;
         }
 
         $this->perPage = (int)$perPage;
     }
 
-    public function addColumns( array $columns )
+    public function addColumns(array $columns)
     {
-        foreach ( $columns as $column ) {
-            $this->addColumn( $column );
+        foreach ($columns as $column) {
+            $this->addColumn($column);
         }
     }
 
-    public function addColumn( array $column )
+    public function addColumn(array $column)
     {
-        if ( ! isset( $column[ 'data' ], $column[ 'name' ], $column[ 'label' ] ) ) {
+        if ( ! isset($column[ 'data' ], $column[ 'name' ], $column[ 'label' ])) {
             return false;
         }
 
@@ -61,7 +63,7 @@ class DataTable
         $data[ 'tableSelector' ] = $this->tableSelector;
         $data[ 'columns' ] = $this->getColumns();
 
-        return View::make( 'backend::support.datatables.datatable-html', $data )->render();
+        return View::make('backend::support.datatables.datatable-html', $data)->render();
     }
 
     public function getColumns()
@@ -69,18 +71,18 @@ class DataTable
         return $this->columns;
     }
 
-    public function getDataTablesJs( $view = 'default' )
+    public function getDataTablesJs($view = 'default')
     {
-        $data[ 'columns' ] = json_encode( $this->getColumns() );
+        $data[ 'columns' ] = json_encode($this->getColumns());
         $data[ 'ajaxUrl' ] = $this->ajaxUrl;
         $data[ 'tableSelector' ] = $this->tableSelector;
         $data [ 'perPage' ] = $this->perPage;
 
 
-        if ( 'default' == $view ) {
-            return View::make( 'backend::support.datatables.datatable-js', $data )->render();
+        if ('default' == $view) {
+            return View::make('backend::support.datatables.datatable-js', $data)->render();
         } else {
-            return View::make( $view, $data )->render();
+            return View::make($view, $data)->render();
         }
     }
 

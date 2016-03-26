@@ -34,7 +34,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware( 'guest', [ 'except' => 'getLogout' ] );
+        $this->middleware('guest', ['except' => 'getLogout']);
     }
 
     /**
@@ -44,18 +44,19 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function postLogin( Request $request )
+    public function postLogin(Request $request)
     {
 
-        $this->validate( $request, [ 'username' => 'required|min:3|max:255', 'password' => 'required', ] );
+        $this->validate($request, ['username' => 'required|min:3|max:255', 'password' => 'required',]);
 
-        $credentials = $request->only( 'username', 'password' );
+        $credentials = $request->only('username', 'password');
+        $credentials[ 'enabled' ] = 1;
 
-        if ( Auth::attempt( $credentials, $request->has( 'remember' ) ) ) {
-            return redirect()->intended( $this->getRedirectUrl() );
+        if (Auth::attempt($credentials, $request->has('remember'))) {
+            return redirect()->intended($this->getRedirectUrl());
         } else {
-            return redirect( route( 'login' ) )->withInput( $request->except( [ 'password' ] ) )
-                                               ->withErrors( [ $this->getFailedLoginMessage() ] );
+            return redirect(route('login'))->withInput($request->except(['password']))
+                                           ->withErrors([$this->getFailedLoginMessage()]);
         }
 
     }
@@ -68,13 +69,13 @@ class AuthController extends Controller
     public function getLogin()
     {
 
-        if ( null !== Auth::user() ) {
-            return redirect()->intended( $this->redirectPath() );
+        if (null !== Auth::user()) {
+            return redirect()->intended($this->redirectPath());
         }
 
         $page_title = "Login";
 
-        return view( 'backend::auth.login', compact( 'page_title' ) );
+        return view('backend::auth.login', compact('page_title'));
     }
 
     /**
@@ -86,7 +87,7 @@ class AuthController extends Controller
     {
         $page_title = "Register";
 
-        return view( 'backend::auth.register', compact( 'page_title' ) );
+        return view('backend::auth.register', compact('page_title'));
     }
 
     /**
@@ -96,14 +97,16 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator( array $data )
+    protected function validator(array $data)
     {
-        return Validator::make( $data, [ 'first_name'   => 'required|min:3|max:255',
-                                         'last_name'    => 'required|min:3|max:255',
-                                         'username'     => 'required|min:3|max:32|unique:users',
-                                         'email'        => 'required|email|max:255|unique:users',
-                                         'password'     => 'required|confirmed|min:6',
-                                         'terms_agreed' => 'required', ], [ 'terms_agreed.required' => 'You must agree our TOS in order to proceed with registration' ] );
+        return Validator::make($data, [
+            'first_name'   => 'required|min:3|max:255',
+            'last_name'    => 'required|min:3|max:255',
+            'username'     => 'required|min:3|max:32|unique:users',
+            'email'        => 'required|email|max:255|unique:users',
+            'password'     => 'required|confirmed|min:6',
+            'terms_agreed' => 'required',
+        ], ['terms_agreed.required' => 'You must agree our TOS in order to proceed with registration']);
     }
 
     /**
@@ -113,14 +116,19 @@ class AuthController extends Controller
      *
      * @return User
      */
-    protected function create( array $data )
+    protected function create(array $data)
     {
-        $user = UserGate::create( [ 'first_name' => $data[ 'first_name' ], 'last_name' => $data[ 'last_name' ],
-                                    'username'   => $data[ 'username' ], 'email' => $data[ 'email' ],
-                                    'password'   => bcrypt( $data[ 'password' ] ), 'enabled' => true, ] );
+        $user = UserGate::create([
+            'first_name' => $data[ 'first_name' ],
+            'last_name'  => $data[ 'last_name' ],
+            'username'   => $data[ 'username' ],
+            'email'      => $data[ 'email' ],
+            'password'   => bcrypt($data[ 'password' ]),
+            'enabled'    => true,
+        ]);
 
-        if ( $user ) {
-            $user->attachRole( 2 );
+        if ($user) {
+            $user->attachRole(2);
         }
 
         return $user;

@@ -27,10 +27,10 @@ class EntrustServiceProvider extends ServiceProvider
     public function boot()
     {
         // Publish config files
-        $this->publishes( [ __DIR__ . DIRECTORY_SEPARATOR . 'config/config.php' => config_path( 'entrust.php' ), ] );
+        $this->publishes([__DIR__ . DIRECTORY_SEPARATOR . 'config/config.php' => config_path('entrust.php'),]);
 
         // Register commands
-        $this->commands( 'command.entrust.migration' );
+        $this->commands('command.entrust.migration');
 
         // Register blade directives
         $this->bladeDirectives();
@@ -44,31 +44,31 @@ class EntrustServiceProvider extends ServiceProvider
     private function bladeDirectives()
     {
         // Call to Entrust::hasRole
-        \Blade::directive( 'role', function( $expression ) {
+        \Blade::directive('role', function ($expression) {
             return "<?php if (\\Entrust::hasRole{$expression}) : ?>";
-        } );
+        });
 
-        \Blade::directive( 'endrole', function( $expression ) {
+        \Blade::directive('endrole', function ($expression) {
             return "<?php endif; // Entrust::hasRole ?>";
-        } );
+        });
 
         // Call to Entrust::can
-        \Blade::directive( 'permission', function( $expression ) {
+        \Blade::directive('permission', function ($expression) {
             return "<?php if (\\Entrust::can{$expression}) : ?>";
-        } );
+        });
 
-        \Blade::directive( 'endpermission', function( $expression ) {
+        \Blade::directive('endpermission', function ($expression) {
             return "<?php endif; // Entrust::can ?>";
-        } );
+        });
 
         // Call to Entrust::ability
-        \Blade::directive( 'ability', function( $expression ) {
+        \Blade::directive('ability', function ($expression) {
             return "<?php if (\\Entrust::ability{$expression}) : ?>";
-        } );
+        });
 
-        \Blade::directive( 'endability', function( $expression ) {
+        \Blade::directive('endability', function ($expression) {
             return "<?php endif; // Entrust::ability ?>";
-        } );
+        });
     }
 
     /**
@@ -92,11 +92,11 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function registerEntrust()
     {
-        $this->app->bind( 'entrust', function( $app ) {
-            return new Entrust( $app );
-        } );
+        $this->app->bind('entrust', function ($app) {
+            return new Entrust($app);
+        });
 
-        $this->app->alias( 'entrust', 'Polyether\Entrust' );
+        $this->app->alias('entrust', 'Polyether\Entrust');
     }
 
     /**
@@ -106,9 +106,9 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function registerCommands()
     {
-        $this->app->singleton( 'command.entrust.migration', function( $app ) {
+        $this->app->singleton('command.entrust.migration', function ($app) {
             return new Commands\MigrationCommand();
-        } );
+        });
     }
 
     /**
@@ -118,7 +118,7 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function mergeConfig()
     {
-        $this->mergeConfigFrom( __DIR__ . DIRECTORY_SEPARATOR . 'config/config.php', 'entrust' );
+        $this->mergeConfigFrom(__DIR__ . DIRECTORY_SEPARATOR . 'config/config.php', 'entrust');
     }
 
     /**
@@ -128,6 +128,6 @@ class EntrustServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [ 'command.entrust.migration', ];
+        return ['command.entrust.migration',];
     }
 }

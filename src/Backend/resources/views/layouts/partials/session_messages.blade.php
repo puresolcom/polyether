@@ -23,3 +23,17 @@
         @endif
     </div>
 @endif
+
+
+@if($errors->any())
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        @if (is_array($errors->all()))
+            @foreach($errors->all() as $message)
+                {!! $message !!}
+            @endforeach
+        @else
+            {!! $errors !!}
+        @endif
+    </div>
+@endif

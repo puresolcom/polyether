@@ -15,13 +15,13 @@ class Plugin
      *
      * @return mixed
      */
-    public function handle( $request, Closure $next )
+    public function handle($request, Closure $next)
     {
         // TODO: Get theme from user settings or system setting, or env or default....
         \Plugin::init();
-        \Plugin::do_action( 'init' );
+        \Plugin::do_action('init');
 
-        return $next( $request );
+        return $next($request);
     }
 
 }

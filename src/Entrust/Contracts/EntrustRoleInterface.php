@@ -32,7 +32,7 @@ interface EntrustRoleInterface
      *
      * @return void
      */
-    public function savePermissions( $inputPermissions );
+    public function savePermissions($inputPermissions);
 
     /**
      * Attach permission to current role.
@@ -41,7 +41,7 @@ interface EntrustRoleInterface
      *
      * @return void
      */
-    public function attachPermission( $permission );
+    public function attachPermission($permission);
 
     /**
      * Detach permission form current role.
@@ -50,7 +50,7 @@ interface EntrustRoleInterface
      *
      * @return void
      */
-    public function detachPermission( $permission );
+    public function detachPermission($permission);
 
     /**
      * Attach multiple permissions to current role.
@@ -59,7 +59,7 @@ interface EntrustRoleInterface
      *
      * @return void
      */
-    public function attachPermissions( $permissions );
+    public function attachPermissions($permissions);
 
     /**
      * Detach multiple permissions from current role
@@ -68,5 +68,5 @@ interface EntrustRoleInterface
      *
      * @return void
      */
-    public function detachPermissions( $permissions );
+    public function detachPermissions($permissions);
 }

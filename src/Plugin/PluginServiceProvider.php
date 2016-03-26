@@ -13,14 +13,14 @@ class PluginServiceProvider extends ServiceProvider
         // Pushing the plugin's middleware
 
         $httpKernel = $this->app[ 'Illuminate\Contracts\Http\Kernel' ];
-        $httpKernel->pushMiddleware( Http\Middleware\Plugin::class );
+        $httpKernel->pushMiddleware(Http\Middleware\Plugin::class);
     }
 
     public function register()
     {
-        $this->app->singleton( 'Plugin', function( $app ) {
+        $this->app->singleton('Plugin', function ($app) {
             return new PluginAPI();
-        } );
+        });
     }
 
 }

@@ -20,7 +20,7 @@ class EntrustRole
      *
      * @param Guard $auth
      */
-    public function __construct( Guard $auth )
+    public function __construct(Guard $auth)
     {
         $this->auth = $auth;
     }
@@ -34,12 +34,12 @@ class EntrustRole
      *
      * @return mixed
      */
-    public function handle( $request, Closure $next, $roles )
+    public function handle($request, Closure $next, $roles)
     {
-        if ( $this->auth->guest() || ! $request->user()->hasRole( explode( '|', $roles ) ) ) {
-            abort( 403 );
+        if ($this->auth->guest() || ! $request->user()->hasRole(explode('|', $roles))) {
+            abort(403);
         }
 
-        return $next( $request );
+        return $next($request);
     }
 }

@@ -11,10 +11,12 @@ class MetaAPI
     protected $userMetaRepository;
     protected $postMetaRepository;
 
-    public function __construct( UserMetaRepository $userMetaRepository, PostMetaRepository $postMetaRepository )
+    public function __construct(UserMetaRepository $userMetaRepository, PostMetaRepository $postMetaRepository)
     {
         $this->userMetaRepository = $userMetaRepository;
         $this->postMetaRepository = $postMetaRepository;
     }
+
+    public function get($metaType, $objectId, $metaKey = '', $single) { }
 
 }

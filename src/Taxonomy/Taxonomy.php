@@ -19,8 +19,12 @@ class Taxonomy
     protected $objectRepository;
     private $taxonomies = array();
 
-    public function __construct( TermRepository $termRepository, TermTaxonomyRepository $termTaxonomyRepository, TermTaxonomyRelationshipsRepository $termTaxonomyRelationshipsRepository, PostRepository $objectRepository )
-    {
+    public function __construct(
+        TermRepository $termRepository,
+        TermTaxonomyRepository $termTaxonomyRepository,
+        TermTaxonomyRelationshipsRepository $termTaxonomyRelationshipsRepository,
+        PostRepository $objectRepository
+    ) {
         $this->termRepository = $termRepository;
         $this->termTaxonomyRepository = $termTaxonomyRepository;
         $this->termTaxonomyRelationShipsRepository = $termTaxonomyRelationshipsRepository;
@@ -31,20 +35,36 @@ class Taxonomy
 
     public function registerDefaultTaxonomies()
     {
-        $this->registerTaxonomy( 'category', 'post', [ 'labels'       => [ 'name'     => 'Categories',
-                                                                           'singular' => 'Category' ],
-                                                       'hierarchical' => true, '_built_in' => true ] );
+        $this->registerTaxonomy('category', 'post', [
+            'labels'       => [
+                'name'     => 'Categories',
+                'singular' => 'Category',
+            ],
+            'hierarchical' => true,
+            '_built_in'    => true,
+        ]);
 
-        $this->registerTaxonomy( 'post_tag', 'post', [ 'labels'             => [ 'name'     => 'Tags',
-                                                                                 'singular' => 'Tag' ],
-                                                       'hierarchical'       => false, '_built_in' => true,
-                                                       'show_ui'            => true, 'show_in_admin_menu' => 'false',
-                                                       'show_in_nav_menu'   => false ] );
+        $this->registerTaxonomy('post_tag', 'post', [
+            'labels'             => [
+                'name'     => 'Tags',
+                'singular' => 'Tag',
+            ],
+            'hierarchical'       => false,
+            '_built_in'          => true,
+            'show_ui'            => true,
+            'show_in_admin_menu' => 'false',
+            'show_in_nav_menu'   => false,
+        ]);
 
-        $this->registerTaxonomy( 'nav_menu', [ 'post', 'page' ], [ 'labels'       => [ 'name'     => 'Navigation Menus',
-                                                                                       'singular' => 'Navigation Menu' ],
-                                                                   'hierarchical' => true, 'show_ui' => false,
-                                                                   '_built_in'    => true ] );
+        $this->registerTaxonomy('nav_menu', ['post', 'page'], [
+            'labels'       => [
+                'name'     => 'Navigation Menus',
+                'singular' => 'Navigation Menu',
+            ],
+            'hierarchical' => true,
+            'show_ui'      => false,
+            '_built_in'    => true,
+        ]);
     }
 
     /**
@@ -54,42 +74,48 @@ class Taxonomy
      *
      * @return \Polyether\Support\EtherError
      */
-    public function registerTaxonomy( $taxonomy, $object_type, $args = array() )
+    public function registerTaxonomy($taxonomy, $object_type, $args = array())
     {
 
-        if ( empty( $taxonomy ) || strlen( $taxonomy ) > 32 ) {
-            return new EtherError( 'Taxonomy names must be between 1 and 32 characters in length.' );
+        if (empty($taxonomy) || strlen($taxonomy) > 32) {
+            return new EtherError('Taxonomy names must be between 1 and 32 characters in length.');
         }
 
-        if ( empty( $object_type ) ) {
-            return new EtherError( 'Object type can not be empty' );
+        if (empty($object_type)) {
+            return new EtherError('Object type can not be empty');
         }
 
-        $defaults = [ 'labels'           => [ ], 'show_ui' => true, 'show_in_admin_menu' => null,
-                      'show_in_nav_menu' => null, 'hierarchical' => false, '_built_in' => false ];
+        $defaults = [
+            'labels'             => [],
+            'show_ui'            => true,
+            'show_in_admin_menu' => null,
+            'show_in_nav_menu'   => null,
+            'hierarchical'       => false,
+            '_built_in'          => false,
+        ];
 
 
-        $args = array_merge( $defaults, $args );
+        $args = array_merge($defaults, $args);
 
 
-        if ( null === $args[ 'show_in_admin_menu' ] ) {
+        if (null === $args[ 'show_in_admin_menu' ]) {
             $args[ 'show_in_admin_menu' ] = $args[ 'show_ui' ];
         }
 
-        if ( null === $args[ 'show_in_nav_menu' ] ) {
+        if (null === $args[ 'show_in_nav_menu' ]) {
             $args[ 'show_in_nav_menu' ] = $args[ 'show_ui' ];
         }
 
         $args[ 'name' ] = $taxonomy;
-        $args[ 'object_type' ] = array_unique( (array)$object_type );
+        $args[ 'object_type' ] = array_unique((array)$object_type);
 
         $this->taxonomies[ $taxonomy ] = (object)$args;
     }
 
-    public function unregisterTaxonomy( $taxonomy )
+    public function unregisterTaxonomy($taxonomy)
     {
-        if ( isset( $this->taxonomies[ $taxonomy ] ) ) {
-            unset( $this->taxonomies[ $taxonomy ] );
+        if (isset($this->taxonomies[ $taxonomy ])) {
+            unset($this->taxonomies[ $taxonomy ]);
 
             return true;
         }
@@ -97,9 +123,9 @@ class Taxonomy
         return false;
     }
 
-    public function registerTaxonomyForObjectType( $taxonomy, $object_type )
+    public function registerTaxonomyForObjectType($taxonomy, $object_type)
     {
-        if ( ! isset( $this->taxonomies[ $taxonomy ] ) ) {
+        if ( ! isset($this->taxonomies[ $taxonomy ])) {
             return false;
         }
 
@@ -107,17 +133,17 @@ class Taxonomy
 
         $current_object_type = $this->taxonomies[ $taxonomy ]->object_type;
 
-        $this->taxonomies[ $taxonomy ]->object_type = array_unique( array_merge( $current_object_type, $new_object_type ) );
+        $this->taxonomies[ $taxonomy ]->object_type = array_unique(array_merge($current_object_type, $new_object_type));
     }
 
-    public function getObjectTaxonomies( $object, $output = 'names' )
+    public function getObjectTaxonomies($object, $output = 'names')
     {
-        $object = degrade( $object );
+        $object = degrade($object);
 
         $taxonomies = array();
-        foreach ( (array)$this->getTaxonomies() as $taxName => $taxObj ) {
-            if ( array_intersect( $object, (array)$taxObj->object_type ) ) {
-                if ( 'names' == $output ) {
+        foreach ((array)$this->getTaxonomies() as $taxName => $taxObj) {
+            if (array_intersect($object, (array)$taxObj->object_type)) {
+                if ('names' == $output) {
                     $taxonomies[] = $taxName;
                 } else {
                     $taxonomies[ $taxName ] = $taxObj;
@@ -133,24 +159,39 @@ class Taxonomy
         return $this->taxonomies;
     }
 
-    public function UITerms( $args = [ ] )
+    public function UITerms($args = [])
     {
-        $defaults = [ 'show_options_all' => '', 'show_option_none' => '', 'option_none_value' => '', 'orderby' => 'id',
-                      'order'            => 'ASC', 'with_post_counts' => false, 'hide_empty' => false, 'exclude' => [ ],
-                      'echo'             => true, 'hierarchical' => false, 'spacer' => '&nbsp;&nbsp;', 'name' => '',
-                      'id'               => '', 'class' => '', 'selected' => 0, 'value_field' => 'term_id',
-                      'taxonomy'         => 'category', 'type' => 'default' ];
+        $defaults = [
+            'show_options_all'  => '',
+            'show_option_none'  => '',
+            'option_none_value' => '',
+            'orderby'           => 'id',
+            'order'             => 'ASC',
+            'with_post_counts'  => false,
+            'hide_empty'        => false,
+            'exclude'           => [],
+            'echo'              => true,
+            'hierarchical'      => false,
+            'spacer'            => '&nbsp;&nbsp;',
+            'name'              => '',
+            'id'                => '',
+            'class'             => '',
+            'selected'          => 0,
+            'value_field'       => 'term_id',
+            'taxonomy'          => 'category',
+            'type'              => 'default',
+        ];
 
-        $args = array_merge( $defaults, $args );
+        $args = array_merge($defaults, $args);
 
         $echo = $args[ 'echo' ];
 
         $type = $args[ 'type' ];
 
-        $cacheKey = 'taxonomy_ui_terms_' . md5( http_build_query( $args ) );
+        $cacheKey = 'taxonomy_ui_terms_' . md5(http_build_query($args));
 
-        if ( Cache::tags( [ 'taxonomies', 'taxonomy_ui_terms' ] )->has( $cacheKey ) ) {
-            $output = Cache::tags( [ 'taxonomies', 'taxonomy_ui_terms' ] )->get( $cacheKey );
+        if (Cache::tags(['taxonomies', 'taxonomy_ui_terms'])->has($cacheKey)) {
+            $output = Cache::tags(['taxonomies', 'taxonomy_ui_terms'])->get($cacheKey);
         } else {
             $taxonomy = $args[ 'taxonomy' ];
             $isHierarchical = $args[ 'hierarchical' ];
@@ -163,20 +204,20 @@ class Taxonomy
             $selected = $args[ 'selected' ];
             $valueField = $args[ 'value_field' ];
 
-            if ( $isHierarchical ) {
-                $taxonomyTerms = $this->getHierarchicalTerms( $taxonomy, null, $args );
+            if ($isHierarchical) {
+                $taxonomyTerms = $this->getHierarchicalTerms($taxonomy, null, $args);
             } else {
-                $taxonomyTerms = $this->getTermsByTaxonomy( $taxonomy, $args );
+                $taxonomyTerms = $this->getTermsByTaxonomy($taxonomy, $args);
             }
-            if ( 'default' === $type ) {
-                if ( true == $isHierarchical ) {
+            if ('default' === $type) {
+                if (true == $isHierarchical) {
                     $output = "<div  class=\"hierarchical-taxonomy-wrapper {$class}\"><input type=\"hidden\" name=\"{$name}\" value='0' ><ul class='taxonomy-list'>";
 
-                    if ( ! empty( $taxonomyTerms ) ) {
+                    if ( ! empty($taxonomyTerms)) {
 
-                        $selected = ( $selected == 0 ) ? 'checked = "checked"' : '';
+                        $selected = ($selected == 0) ? 'checked = "checked"' : '';
 
-                        if ( $showOptionsAll ) {
+                        if ($showOptionsAll) {
                             $output .= "<li>
                                         <div class=\"checkbox\">
                                             <label>
@@ -187,7 +228,7 @@ class Taxonomy
                                     </li>";
                         }
 
-                        $output .= $this->_termsCheckboxWalker( $taxonomyTerms, $args );
+                        $output .= $this->_termsCheckboxWalker($taxonomyTerms, $args);
 
                     } else {
                         $output .= "<li>{$showOptionNone}</li>";
@@ -199,14 +240,14 @@ class Taxonomy
                     $output = "<input type=\"hidden\" name=\"{$name}\" value='0' ><select id=\"{$id}\" name=\"{$name}\" class=\"taxonomy-tag-select {$class}\" data-taxonomy=\"{$taxonomy}\" data-value-field=\"{$valueField}\" multiple=\"multiple\">";
 
 
-                    if ( ! empty( $taxonomyTerms ) ) {
+                    if ( ! empty($taxonomyTerms)) {
 
-                        $selected = ( $selected == 0 ) ? 'selected = "selected"' : '';
+                        $selected = ($selected == 0) ? 'selected = "selected"' : '';
 
-                        if ( $showOptionsAll ) {
+                        if ($showOptionsAll) {
                             $output .= "<option {$selected} value=\"0\">{$showOptionsAll}</option>";
                         }
-                        $output .= $this->_termsDropdownWalker( $taxonomyTerms, $args );
+                        $output .= $this->_termsDropdownWalker($taxonomyTerms, $args);
                     } else {
                         $output .= "<option value=\"{$optionNoneValue}\">{$showOptionNone}</option>";
                     }
@@ -217,66 +258,66 @@ class Taxonomy
                 $output = "<select id=\"{$id}\" name=\"{$name}\" class=\"{$class}\" data-taxonomy=\"{$taxonomy}\" data-value-field=\"{$valueField}\">";
 
 
-                if ( ! empty( $taxonomyTerms ) ) {
+                if ( ! empty($taxonomyTerms)) {
 
-                    $selected = ( $selected == 0 ) ? 'selected = "selected"' : '';
+                    $selected = ($selected == 0) ? 'selected = "selected"' : '';
 
-                    if ( $showOptionsAll ) {
+                    if ($showOptionsAll) {
                         $output .= "<option {$selected} value=\"0\">{$showOptionsAll}</option>";
                     }
-                    $output .= $this->_termsDropdownWalker( $taxonomyTerms, $args );
+                    $output .= $this->_termsDropdownWalker($taxonomyTerms, $args);
                 } else {
                     $output .= "<option value=\"{$optionNoneValue}\">{$showOptionNone}</option>";
                 }
 
                 $output .= '</select>';
             }
-            Cache::tags( [ 'taxonomies', 'taxonomy_ui_terms' ] )->forever( $cacheKey, $output );
+            Cache::tags(['taxonomies', 'taxonomy_ui_terms'])->forever($cacheKey, $output);
         }
 
-        if ( $echo ) {
+        if ($echo) {
             echo $output;
         } else {
             return $output;
         }
     }
 
-    public function getHierarchicalTerms( $taxonomy, $parent = null, $args = [ ] )
+    public function getHierarchicalTerms($taxonomy, $parent = null, $args = [])
     {
-        $cacheKey = 'get_hierarchical_terms_' . $taxonomy . '_' . $parent . '_' . md5( http_build_query( $args ) );
-        $result = [ ];
+        $cacheKey = 'get_hierarchical_terms_' . $taxonomy . '_' . $parent . '_' . md5(http_build_query($args));
+        $result = [];
 
-        if ( Cache::tags( [ 'taxonomies', 'get_hierarchical_terms' ] )->has( $cacheKey ) ) {
-            return Cache::tags( [ 'taxonomies', 'get_hierarchical_terms' ] )->get( $cacheKey );
+        if (Cache::tags(['taxonomies', 'get_hierarchical_terms'])->has($cacheKey)) {
+            return Cache::tags(['taxonomies', 'get_hierarchical_terms'])->get($cacheKey);
         }
 
-        if ( $this->taxonomyExists( $taxonomy ) && $this->isTaxonomyHierarchical( $taxonomy ) ) {
-            $taxonomyTerms = $this->getTermsByTaxonomy( $taxonomy, $args );
-            if ( count( $taxonomyTerms ) > 0 ) {
-                $result = $this->_buildTermsTree( $taxonomyTerms, $parent );
-                Cache::tags( [ 'taxonomies', 'get_hierarchical_terms' ] )->forever( $cacheKey, $result );
+        if ($this->taxonomyExists($taxonomy) && $this->isTaxonomyHierarchical($taxonomy)) {
+            $taxonomyTerms = $this->getTermsByTaxonomy($taxonomy, $args);
+            if (count($taxonomyTerms) > 0) {
+                $result = $this->_buildTermsTree($taxonomyTerms, $parent);
+                Cache::tags(['taxonomies', 'get_hierarchical_terms'])->forever($cacheKey, $result);
             }
         }
 
         return $result;
     }
 
-    public function getTermsByTaxonomy( $taxonomy, $args = [ ] )
+    public function getTermsByTaxonomy($taxonomy, $args = [])
     {
-        $defaults = [ 'orderby' => 'id', 'order' => 'ASC', 'hide_empty' => false, 'exclude' => [ ], 'limit' => null ];
-        $args = array_merge( $defaults, $args );
-        $result = [ ];
-        $cacheKey = 'get_terms_by_taxonomy_' . $taxonomy . '_' . md5( http_build_query( $args ) );
+        $defaults = ['orderby' => 'id', 'order' => 'ASC', 'hide_empty' => false, 'exclude' => [], 'limit' => null];
+        $args = array_merge($defaults, $args);
+        $result = [];
+        $cacheKey = 'get_terms_by_taxonomy_' . $taxonomy . '_' . md5(http_build_query($args));
 
-        if ( Cache::tags( [ 'taxonomies', 'get_terms_by_taxonomy' ] )->has( $cacheKey ) ) {
-            return Cache::tags( [ 'taxonomies', 'get_terms_by_taxonomy' ] )->get( $cacheKey );
+        if (Cache::tags(['taxonomies', 'get_terms_by_taxonomy'])->has($cacheKey)) {
+            return Cache::tags(['taxonomies', 'get_terms_by_taxonomy'])->get($cacheKey);
         }
 
-        if ( $this->taxonomyExists( $taxonomy ) ) {
-            $termTaxonomies = $this->termTaxonomyRepository->getTaxonomyWithTerms( $taxonomy, $args );
+        if ($this->taxonomyExists($taxonomy)) {
+            $termTaxonomies = $this->termTaxonomyRepository->getTaxonomyWithTerms($taxonomy, $args);
 
-            if ( $termTaxonomies ) {
-                Cache::tags( [ 'taxonomies', 'get_terms_by_taxonomy' ] )->forever( $cacheKey, $termTaxonomies );
+            if ($termTaxonomies) {
+                Cache::tags(['taxonomies', 'get_terms_by_taxonomy'])->forever($cacheKey, $termTaxonomies);
                 $result = $termTaxonomies;
             }
         }
@@ -284,7 +325,7 @@ class Taxonomy
         return $result;
     }
 
-    private function _termsCheckboxWalker( $taxonomyTerms, $args )
+    private function _termsCheckboxWalker($taxonomyTerms, $args)
     {
         $taxonomy = $args[ 'taxonomy' ];
         $withPostCounts = $args[ 'with_post_counts' ];
@@ -293,12 +334,13 @@ class Taxonomy
         $name = $args[ 'name' ];
         $output = '';
 
-        $taxonomyTerms = degrade( $taxonomyTerms );
+        $taxonomyTerms = degrade($taxonomyTerms);
 
-        foreach ( $taxonomyTerms as $taxonomyTerm ) {
-            $selected = ( ! empty( $selectedValues ) && in_array( $taxonomyTerm[ $valueField ], $selectedValues ) ) ? 'checked = "checked"' : '';
-            $postCounts = ( $withPostCounts ) ? ' (' . $taxonomyTerm[ 'count' ] . ')' : '';
-            $value = isset( $taxonomyTerm[ $valueField ] ) ? $taxonomyTerm[ $valueField ] : $taxonomyTerm[ 'term' ][ $valueField ];
+        foreach ($taxonomyTerms as $taxonomyTerm) {
+            $selected = ( ! empty($selectedValues) && in_array($taxonomyTerm[ $valueField ],
+                    $selectedValues)) ? 'checked = "checked"' : '';
+            $postCounts = ($withPostCounts) ? ' (' . $taxonomyTerm[ 'count' ] . ')' : '';
+            $value = isset($taxonomyTerm[ $valueField ]) ? $taxonomyTerm[ $valueField ] : $taxonomyTerm[ 'term' ][ $valueField ];
             $output .= "<li>
                             <div class=\"checkbox\">
                                 <label>
@@ -307,10 +349,10 @@ class Taxonomy
                                 </label>
                             </div>
                             ";
-            $hasChildren = ( isset( $taxonomyTerm[ 'children' ] ) && ! empty( $taxonomyTerm[ 'children' ] ) ) ? true : false;
-            if ( ! empty( $hasChildren ) ) {
+            $hasChildren = (isset($taxonomyTerm[ 'children' ]) && ! empty($taxonomyTerm[ 'children' ])) ? true : false;
+            if ( ! empty($hasChildren)) {
                 $output .= '<ul>';
-                $output .= $this->_termsCheckboxWalker( $taxonomyTerm[ 'children' ], $args );
+                $output .= $this->_termsCheckboxWalker($taxonomyTerm[ 'children' ], $args);
                 $output .= '</ul>';
                 $output .= '</li>';
             } else {
@@ -321,7 +363,7 @@ class Taxonomy
         return $output;
     }
 
-    private function _termsDropdownWalker( $taxonomyTerms, $args )
+    private function _termsDropdownWalker($taxonomyTerms, $args)
     {
         $isHierarchical = $args[ 'hierarchical' ];
         $withPostCounts = $args[ 'with_post_counts' ];
@@ -330,34 +372,35 @@ class Taxonomy
         $type = $args[ 'type' ];
         $output = '';
 
-        $taxonomyTerms = degrade( $taxonomyTerms );
+        $taxonomyTerms = degrade($taxonomyTerms);
 
-        foreach ( $taxonomyTerms as $taxonomyTerm ) {
-            $selected = ( ! empty( $selectedValues ) && in_array( (int)$taxonomyTerm[ 'term' ] [ 'id' ], $selectedValues ) ) ? 'selected = "selected"' : '';
-            if ( 'default' == $type ) {
-                if ( ! empty( $selected ) ) {
-                    $postCounts = ( $withPostCounts ) ? ' (' . $taxonomyTerm[ 'count' ] . ')' : '';
-                    $value = isset( $taxonomyTerm[ $valueField ] ) ? $taxonomyTerm[ $valueField ] : $taxonomyTerm[ 'term' ][ $valueField ];
+        foreach ($taxonomyTerms as $taxonomyTerm) {
+            $selected = ( ! empty($selectedValues) && in_array((int)$taxonomyTerm[ 'term' ] [ 'id' ],
+                    $selectedValues)) ? 'selected = "selected"' : '';
+            if ('default' == $type) {
+                if ( ! empty($selected)) {
+                    $postCounts = ($withPostCounts) ? ' (' . $taxonomyTerm[ 'count' ] . ')' : '';
+                    $value = isset($taxonomyTerm[ $valueField ]) ? $taxonomyTerm[ $valueField ] : $taxonomyTerm[ 'term' ][ $valueField ];
                     $output .= "<option {$selected} value=\"{$value}\">{$taxonomyTerm['term']['name']}{$postCounts}</option>\n";
-                    $hasChildren = ( isset( $taxonomyTerm[ 'children' ] ) && ! empty( $taxonomyTerm[ 'children' ] ) ) ? true : false;
-                    if ( $hasChildren ) {
-                        $output .= $this->_termsDropdownWalker( $taxonomyTerm[ 'children' ], $args );
+                    $hasChildren = (isset($taxonomyTerm[ 'children' ]) && ! empty($taxonomyTerm[ 'children' ])) ? true : false;
+                    if ($hasChildren) {
+                        $output .= $this->_termsDropdownWalker($taxonomyTerm[ 'children' ], $args);
                     }
                 }
             } else {
-                $postCounts = ( $withPostCounts ) ? ' (' . $taxonomyTerm[ 'count' ] . ')' : '';
-                $value = isset( $taxonomyTerm[ $valueField ] ) ? $taxonomyTerm[ $valueField ] : $taxonomyTerm[ 'term' ][ $valueField ];
+                $postCounts = ($withPostCounts) ? ' (' . $taxonomyTerm[ 'count' ] . ')' : '';
+                $value = isset($taxonomyTerm[ $valueField ]) ? $taxonomyTerm[ $valueField ] : $taxonomyTerm[ 'term' ][ $valueField ];
                 $space = '';
 
-                if ( $isHierarchical ) {
+                if ($isHierarchical) {
                     $spacer = $args[ 'spacer' ];
-                    $space = str_repeat( $spacer, (int)$taxonomyTerm[ 'depth' ] );
+                    $space = str_repeat($spacer, (int)$taxonomyTerm[ 'depth' ]);
                 }
 
                 $output .= "<option {$selected} value=\"{$value}\">{$space}{$taxonomyTerm['term']['name']}{$postCounts}</option>\n";
-                $hasChildren = ( isset( $taxonomyTerm[ 'children' ] ) && ! empty( $taxonomyTerm[ 'children' ] ) ) ? true : false;
-                if ( $hasChildren ) {
-                    $output .= $this->_termsDropdownWalker( $taxonomyTerm[ 'children' ], $args );
+                $hasChildren = (isset($taxonomyTerm[ 'children' ]) && ! empty($taxonomyTerm[ 'children' ])) ? true : false;
+                if ($hasChildren) {
+                    $output .= $this->_termsDropdownWalker($taxonomyTerm[ 'children' ], $args);
                 }
             }
         }
@@ -365,35 +408,35 @@ class Taxonomy
         return $output;
     }
 
-    public function taxonomyExists( $taxonomy )
+    public function taxonomyExists($taxonomy)
     {
-        if ( ! is_string( $taxonomy ) ) {
+        if ( ! is_string($taxonomy)) {
             return false;
         }
 
-        return isset( $this->taxonomies[ $taxonomy ] );
+        return isset($this->taxonomies[ $taxonomy ]);
     }
 
-    public function isTaxonomyHierarchical( $taxonomy )
+    public function isTaxonomyHierarchical($taxonomy)
     {
-        if ( ! $this->taxonomyExists( $taxonomy ) ) {
+        if ( ! $this->taxonomyExists($taxonomy)) {
             return false;
         }
 
-        $taxonomy = $this->getTaxonomy( $taxonomy );
+        $taxonomy = $this->getTaxonomy($taxonomy);
 
         return $taxonomy->hierarchical;
     }
 
-    protected function _buildTermsTree( $taxonomyTerms, $parent = null, $depth = 0 )
+    protected function _buildTermsTree($taxonomyTerms, $parent = null, $depth = 0)
     {
-        $branch = [ ];
+        $branch = [];
 
-        if ( count( $taxonomyTerms ) > 0 ) {
-            foreach ( $taxonomyTerms as $taxonomyTerm ) {
-                if ( $parent == $taxonomyTerm[ 'parent' ] ) {
-                    $hasChildren = $this->_buildTermsTree( $taxonomyTerms, $taxonomyTerm[ 'term_id' ], $depth + 1 );
-                    if ( $hasChildren ) {
+        if (count($taxonomyTerms) > 0) {
+            foreach ($taxonomyTerms as $taxonomyTerm) {
+                if ($parent == $taxonomyTerm[ 'parent' ]) {
+                    $hasChildren = $this->_buildTermsTree($taxonomyTerms, $taxonomyTerm[ 'term_id' ], $depth + 1);
+                    if ($hasChildren) {
                         $taxonomyTerm[ 'children' ] = $hasChildren;
                     }
                     $taxonomyTerm[ 'depth' ] = $depth;
@@ -405,114 +448,118 @@ class Taxonomy
         return $branch;
     }
 
-    public function getTaxonomy( $taxonomy )
+    public function getTaxonomy($taxonomy)
     {
 
-        if ( ! $this->taxonomyExists( $taxonomy ) ) {
+        if ( ! $this->taxonomyExists($taxonomy)) {
             return false;
         }
 
         return $this->taxonomies[ $taxonomy ];
     }
 
-    public function getObjectTermTaxonomiesByTermIds( $objectId, $taxonomy, $termsIds )
+    public function getObjectTermTaxonomiesByTermIds($objectId, $taxonomy, $termsIds)
     {
-        return $this->objectRepository->getTermTaxonomies( $objectId, $taxonomy, $termsIds );
+        return $this->objectRepository->getTermTaxonomies($objectId, $taxonomy, $termsIds);
     }
 
-    public function filterTaxonomies( $args, $output = 'names', $operator = 'and', $taxonomies = false )
+    public function filterTaxonomies($args, $output = 'names', $operator = 'and', $taxonomies = false)
     {
-        $field = ( 'names' == $output ) ? 'name' : false;
+        $field = ('names' == $output) ? 'name' : false;
 
-        $taxonomiesSource = ( is_array( $taxonomies ) ) ? $taxonomies : $this->getTaxonomies();
+        $taxonomiesSource = (is_array($taxonomies)) ? $taxonomies : $this->getTaxonomies();
 
-        return filterObjectList( $taxonomiesSource, $args, $operator, $field );
+        return filterObjectList($taxonomiesSource, $args, $operator, $field);
     }
 
-    public function setObjectTerms( $objectId, $terms, $taxonomy, $append = false )
+    public function setObjectTerms($objectId, $terms, $taxonomy, $append = false)
     {
         $objectId = (int)$objectId;
 
-        if ( ! $this->taxonomyExists( $taxonomy ) ) {
-            return new EtherError( 'Invalid Taxonomy' );
+        if ( ! $this->taxonomyExists($taxonomy)) {
+            return new EtherError('Invalid Taxonomy');
         }
 
-        if ( ! is_array( $terms ) ) {
+        if ( ! is_array($terms)) {
             $terms = (array)$terms;
         }
 
         // We check for terms with zero value and unset it (Backend will send zero value term when no taxonomy terms are selected)
-        if ( ( $key = array_search( 0, $terms ) ) !== false ) {
-            unset( $terms[ $key ] );
+        if (($key = array_search(0, $terms)) !== false) {
+            unset($terms[ $key ]);
         }
 
-        $currentTerms = array_pluck( $this->getObjectTerms( $objectId, $taxonomy ), 'id' );
+        $currentTerms = array_pluck($this->getObjectTerms($objectId, $taxonomy), 'id');
 
-        sort( $terms );
-        sort( $currentTerms );
+        sort($terms);
+        sort($currentTerms);
 
 
-        if ( $terms == $currentTerms ) {
-            return [ ];
+        if ($terms == $currentTerms) {
+            return [];
         }
 
-        if ( ! $append ) {
-            $oldTtIds = [ ];
+        if ( ! $append) {
+            $oldTtIds = [];
 
-            $oldTermTaxonomies = $this->objectRepository->getTermTaxonomies( $objectId, $taxonomy );
-            if ( $oldTermTaxonomies ) {
-                $oldTtIds = array_pluck( $oldTermTaxonomies, 'id' );
+            $oldTermTaxonomies = $this->objectRepository->getTermTaxonomies($objectId, $taxonomy);
+            if ($oldTermTaxonomies) {
+                $oldTtIds = array_pluck($oldTermTaxonomies, 'id');
             }
         }
 
-        $ttIds = [ ];
-        $newTtIds = [ ];
+        $ttIds = [];
+        $newTtIds = [];
 
-        foreach ( $terms as $term ) {
+        foreach ($terms as $term) {
 
-            if ( ! strlen( trim( $term ) ) ) {
+            if ( ! strlen(trim($term))) {
                 continue;
             }
 
-            if ( ! $termInfo = $this->termExists( $term, $taxonomy ) ) {
-                if ( is_int( $term ) ) {
+            if ( ! $termInfo = $this->termExists($term, $taxonomy)) {
+                if (is_int($term)) {
                     continue;
                 }
 
-                $termInfo = $this->createTerm( $term, $taxonomy );
+                $termInfo = $this->createTerm($term, $taxonomy);
             }
 
 
-            if ( $termInfo instanceof EtherError ) {
+            if ($termInfo instanceof EtherError) {
                 return $termInfo;
             }
 
             $ttId = $termInfo[ 'id' ];
             $ttIds[] = $ttId;
 
-            if ( $this->termTaxonomyRelationShipsRepository->findWhereFirst( [ 'object_id'        => (int)$objectId,
-                                                                               'term_taxonomy_id' => (int)$ttId ], [ 'term_taxonomy_id' ] )
+            if ($this->termTaxonomyRelationShipsRepository->findWhereFirst([
+                'object_id'        => (int)$objectId,
+                'term_taxonomy_id' => (int)$ttId,
+            ], ['term_taxonomy_id'])
             ) {
                 continue;
             }
 
-            $this->termTaxonomyRelationShipsRepository->create( [ 'object_id'        => $objectId,
-                                                                  'term_taxonomy_id' => $ttId ] );
+            $this->termTaxonomyRelationShipsRepository->create([
+                'object_id'        => $objectId,
+                'term_taxonomy_id' => $ttId,
+            ]);
             $newTtIds[] = $ttId;
         }
-        if ( $newTtIds ) {
-            $this->updateTermCount( $newTtIds );
+        if ($newTtIds) {
+            $this->updateTermCount($newTtIds);
         }
 
-        if ( ! $append ) {
+        if ( ! $append) {
 
 
-            if ( ! empty( $oldTtIds ) ) {
-                $toDeleteTtIds = array_diff( $oldTtIds, $ttIds );
-                if ( ! empty( $toDeleteTtIds ) ) {
-                    $this->objectRepository->detachTermTaxonomies( $objectId, $toDeleteTtIds );
+            if ( ! empty($oldTtIds)) {
+                $toDeleteTtIds = array_diff($oldTtIds, $ttIds);
+                if ( ! empty($toDeleteTtIds)) {
+                    $this->objectRepository->detachTermTaxonomies($objectId, $toDeleteTtIds);
                 }
-                $this->updateTermCount( $toDeleteTtIds );
+                $this->updateTermCount($toDeleteTtIds);
             }
 
         }
@@ -521,16 +568,16 @@ class Taxonomy
         return $ttIds;
     }
 
-    public function getObjectTerms( $objectId, $taxonomy, $args = [ ] )
+    public function getObjectTerms($objectId, $taxonomy, $args = [])
     {
-        $terms = [ ];
+        $terms = [];
 
-        $cacheKey = 'object_terms_' . md5( implode( '_', func_get_args() ) );
+        $cacheKey = 'object_terms_' . md5(implode('_', func_get_args()));
 
-        if ( Cache::tags( [ 'taxonomies', 'get_object_terms' ] )->has( $cacheKey ) ) {
-            $terms = Cache::tags( [ 'taxonomies', 'get_object_terms' ] )->get( $cacheKey );
-        } else if ( $termsFound = $this->objectRepository->getPostTerms( $objectId, $taxonomy ) ) {
-            Cache::tags( [ 'taxonomies', 'get_object_terms' ] )->forever( $cacheKey, $termsFound );
+        if (Cache::tags(['taxonomies', 'get_object_terms'])->has($cacheKey)) {
+            $terms = Cache::tags(['taxonomies', 'get_object_terms'])->get($cacheKey);
+        } else if ($termsFound = $this->objectRepository->getPostTerms($objectId, $taxonomy)) {
+            Cache::tags(['taxonomies', 'get_object_terms'])->forever($cacheKey, $termsFound);
 
             $terms = $termsFound;
         }
@@ -538,9 +585,9 @@ class Taxonomy
         return $terms;
     }
 
-    public function termExists( $term, $taxonomy = '', $parent = null )
+    public function termExists($term, $taxonomy = '', $parent = null)
     {
-        return $this->getTerm( $term, $taxonomy, $parent );
+        return $this->getTerm($term, $taxonomy, $parent);
     }
 
     /**
@@ -550,87 +597,92 @@ class Taxonomy
      *
      * @return false|Collection|\Polyether\Support\EtherError
      */
-    public function createTerm( $term, $taxonomy, $args = [ ] )
+    public function createTerm($term, $taxonomy, $args = [])
     {
-        $defaults = [ 'description' => '', 'parent' => null, 'slug' => '', ];
+        $defaults = ['description' => '', 'parent' => null, 'slug' => '',];
 
-        $args = array_merge( $defaults, $args );
+        $args = array_merge($defaults, $args);
 
 
-        if ( ! $this->taxonomyExists( $taxonomy ) ) {
-            return new EtherError( 'Invalid Taxonomy' );
+        if ( ! $this->taxonomyExists($taxonomy)) {
+            return new EtherError('Invalid Taxonomy');
         }
 
-        if ( is_int( $args[ 'parent' ] ) && 0 != $args[ 'parent' ] ) {
+        if (is_int($args[ 'parent' ]) && 0 != $args[ 'parent' ]) {
 
-            if ( ! $this->isTaxonomyHierarchical( $taxonomy ) ) {
-                return new EtherError( 'Taxonomy are not hierarchical, can\'t accept parent' );
+            if ( ! $this->isTaxonomyHierarchical($taxonomy)) {
+                return new EtherError('Taxonomy are not hierarchical, can\'t accept parent');
             }
 
-            if ( ! $parent = $this->termExists( $args[ 'parent' ], $taxonomy ) ) {
-                return new EtherError( 'Parent term id not found or not using the same taxonomy provided' );
+            if ( ! $parent = $this->termExists($args[ 'parent' ], $taxonomy)) {
+                return new EtherError('Parent term id not found or not using the same taxonomy provided');
             }
         }
 
 
-        if ( is_int( $term ) ) {
-            if ( $term == 0 ) {
-                return new EtherError( 'Invalid term id' );
+        if (is_int($term)) {
+            if ($term == 0) {
+                return new EtherError('Invalid term id');
             }
 
             // we check if term id exists if so we can assign it to the taxonomy
-            if ( ! $this->termExists( $term ) ) {
-                return new EtherError( 'Term id not found' );
+            if ( ! $this->termExists($term)) {
+                return new EtherError('Term id not found');
             }
 
-            if ( ! $this->termNotAssignedToAnyTaxonomy( $term ) ) {
-                return new EtherError( 'Term id already assigned to taxonomy' );
+            if ( ! $this->termNotAssignedToAnyTaxonomy($term)) {
+                return new EtherError('Term id already assigned to taxonomy');
             } else {
-                $result = $this->termTaxonomyRepository->create( [ 'term_id'     => (int)$term, 'taxonomy' => $taxonomy,
-                                                                   'description' => $args[ 'description' ],
-                                                                   'parent'      => $args[ 'parent' ], ] );
-                if ( $result ) {
-                    Cache::tags( 'taxonomies' )->flush();
+                $result = $this->termTaxonomyRepository->create([
+                    'term_id'     => (int)$term,
+                    'taxonomy'    => $taxonomy,
+                    'description' => $args[ 'description' ],
+                    'parent'      => $args[ 'parent' ],
+                ]);
+                if ($result) {
+                    Cache::tags('taxonomies')->flush();
 
                     return $result;
                 } else {
-                    return new EtherError( 'Cannot create termTaxonomy' );
+                    return new EtherError('Cannot create termTaxonomy');
                 }
             }
 
         }
 
 
-        if ( is_string( $term ) ) {
-            if ( $term == '' ) {
-                return new EtherError( 'Invalid term name' );
+        if (is_string($term)) {
+            if ($term == '') {
+                return new EtherError('Invalid term name');
             }
 
 
-            $termWithTaxonomyFound = $this->termExists( $term, $taxonomy );
-            $termOnlyFound = $this->termExists( $term );
+            $termWithTaxonomyFound = $this->termExists($term, $taxonomy);
+            $termOnlyFound = $this->termExists($term);
 
-            if ( ! $termWithTaxonomyFound && $termOnlyFound && $this->termNotAssignedToAnyTaxonomy( (int)$termOnlyFound[ 'term_id' ] ) ) {
-                return $this->createTerm( (int)$termOnlyFound[ 'term_id' ], $taxonomy, $args );
+            if ( ! $termWithTaxonomyFound && $termOnlyFound && $this->termNotAssignedToAnyTaxonomy((int)$termOnlyFound[ 'term_id' ])) {
+                return $this->createTerm((int)$termOnlyFound[ 'term_id' ], $taxonomy, $args);
             } else {
-                $slug = ! empty( $args[ 'slug' ] ) ? $this->termRepository->createSlug( $args[ 'slug' ] ) : $this->termRepository->createSlug( $term );
+                $slug = ! empty($args[ 'slug' ]) ? $this->termRepository->createSlug($args[ 'slug' ]) : $this->termRepository->createSlug($term);
 
-                if ( $termWithTaxonomyFound && isset( $parent ) ) {
-                    $slug = $this->termRepository->sluggableTerm( $slug . '-' . $parent[ 'slug' ], $taxonomy );
+                if ($termWithTaxonomyFound && isset($parent)) {
+                    $slug = $this->termRepository->sluggableTerm($slug . '-' . $parent[ 'slug' ], $taxonomy);
                 } else {
-                    $slug = $this->termRepository->sluggableTerm( $slug, $taxonomy );
+                    $slug = $this->termRepository->sluggableTerm($slug, $taxonomy);
                 }
-                $createdTerm = $this->termRepository->create( [ 'name' => $term, 'slug' => $slug, ] );
-                if ( $createdTerm ) {
+                $createdTerm = $this->termRepository->create(['name' => $term, 'slug' => $slug,]);
+                if ($createdTerm) {
 
-                    $result = $this->termTaxonomyRepository->create( [ 'term_id'     => (int)$createdTerm->id,
-                                                                       'taxonomy'    => $taxonomy,
-                                                                       'description' => $args[ 'description' ],
-                                                                       'parent'      => $args[ 'parent' ], ] );
+                    $result = $this->termTaxonomyRepository->create([
+                        'term_id'     => (int)$createdTerm->id,
+                        'taxonomy'    => $taxonomy,
+                        'description' => $args[ 'description' ],
+                        'parent'      => $args[ 'parent' ],
+                    ]);
                     $result->term = $createdTerm;
 
-                    if ( $result ) {
-                        Cache::tags( 'taxonomies' )->flush();
+                    if ($result) {
+                        Cache::tags('taxonomies')->flush();
 
                         return $result;
                     }
@@ -643,27 +695,27 @@ class Taxonomy
         }
     }
 
-    public function updateTermCount( $termTaxonomyIds )
+    public function updateTermCount($termTaxonomyIds)
     {
 
-        if ( empty( $termTaxonomyIds ) ) {
+        if (empty($termTaxonomyIds)) {
             return false;
         }
 
 
-        if ( ! is_array( $termTaxonomyIds ) ) {
+        if ( ! is_array($termTaxonomyIds)) {
             $termTaxonomyIds = (array)$termTaxonomyIds;
         }
 
-        $termTaxonomyIds = array_map( 'intval', $termTaxonomyIds );
+        $termTaxonomyIds = array_map('intval', $termTaxonomyIds);
 
 
-        foreach ( $termTaxonomyIds as $termTaxonomyId ) {
-            $count = (int)$this->termTaxonomyRepository->countObjects( $termTaxonomyId, [ 'post_status' => 'publish' ] );
-            $this->termTaxonomyRepository->update( [ 'count' => $count ], $termTaxonomyId );
+        foreach ($termTaxonomyIds as $termTaxonomyId) {
+            $count = (int)$this->termTaxonomyRepository->countObjects($termTaxonomyId, ['post_status' => 'publish']);
+            $this->termTaxonomyRepository->update(['count' => $count], $termTaxonomyId);
         }
 
-        Cache::tags( [ 'get_object_terms', 'get_hierarchical_terms', 'get_terms_by_taxonomy', 'taxonomy_ui_terms' ] )
+        Cache::tags(['get_object_terms', 'get_hierarchical_terms', 'get_terms_by_taxonomy', 'taxonomy_ui_terms'])
              ->flush();
     }
 
@@ -674,38 +726,38 @@ class Taxonomy
      *
      * @return false|array
      */
-    public function getTerm( $term, $taxonomy = '', $parent = null )
+    public function getTerm($term, $taxonomy = '', $parent = null)
     {
-        $cacheKey = 'term_' . md5( implode( '_', func_get_args() ) );
+        $cacheKey = 'term_' . md5(implode('_', func_get_args()));
 
-        if ( Cache::tags( 'taxonomies' )->has( $cacheKey ) ) {
-            return Cache::tags( 'taxonomies' )->get( $cacheKey );
+        if (Cache::tags('taxonomies')->has($cacheKey)) {
+            return Cache::tags('taxonomies')->get($cacheKey);
         }
 
-        if ( is_int( $term ) ) {
-            if ( $term == 0 ) {
+        if (is_int($term)) {
+            if ($term == 0) {
                 return false;
             }
-            $query = $this->termRepository->getTermById( $term, $taxonomy, $parent );
+            $query = $this->termRepository->getTermById($term, $taxonomy, $parent);
         }
 
-        if ( is_string( $term ) ) {
-            if ( $term == '' ) {
+        if (is_string($term)) {
+            if ($term == '') {
                 return false;
             }
-            if ( ! empty( $taxonomy ) ) {
-                if ( is_int( $parent ) ) {
-                    $query = $this->termRepository->getByNameOrSlugWithTaxonomy( $term, $taxonomy, $parent );
+            if ( ! empty($taxonomy)) {
+                if (is_int($parent)) {
+                    $query = $this->termRepository->getByNameOrSlugWithTaxonomy($term, $taxonomy, $parent);
                 } else {
-                    $query = $this->termRepository->getByNameOrSlugWithTaxonomy( $term, $taxonomy );
+                    $query = $this->termRepository->getByNameOrSlugWithTaxonomy($term, $taxonomy);
                 }
             } else {
-                $query = $this->termRepository->getByNameOrSlug( $term );
+                $query = $this->termRepository->getByNameOrSlug($term);
             }
         }
 
-        if ( $query ) {
-            Cache::tags( 'taxonomies' )->forever( $cacheKey, $query );
+        if ($query) {
+            Cache::tags('taxonomies')->forever($cacheKey, $query);
 
             return $query;
         }
@@ -714,117 +766,117 @@ class Taxonomy
 
     }
 
-    public function termNotAssignedToAnyTaxonomy( $term_id )
+    public function termNotAssignedToAnyTaxonomy($term_id)
     {
-        $query = $this->termTaxonomyRepository->findWhereFirst( [ 'term_id' => $term_id ], [ 'id' ], true );
+        $query = $this->termTaxonomyRepository->findWhereFirst(['term_id' => $term_id], ['id'], true);
 
-        return ( empty( $query ) ) ? true : false;
+        return (empty($query)) ? true : false;
     }
 
-    public function updateTerm( $termId, $taxonomy, $args = [ ] )
+    public function updateTerm($termId, $taxonomy, $args = [])
     {
 
-        if ( ! $this->taxonomyExists( $taxonomy ) ) {
-            return new EtherError( 'Invalid taxonomy' );
+        if ( ! $this->taxonomyExists($taxonomy)) {
+            return new EtherError('Invalid taxonomy');
         }
 
         $termId = (int)$termId;
 
-        $term = $this->getTerm( $termId, $taxonomy );
+        $term = $this->getTerm($termId, $taxonomy);
 
-        if ( ! $term ) {
-            return new EtherError( 'Invalid Term' );
+        if ( ! $term) {
+            return new EtherError('Invalid Term');
         }
 
-        $term = degrade( $term );
+        $term = degrade($term);
 
-        $args = array_merge( $term, $args );
+        $args = array_merge($term, $args);
 
-        $defaults = [ 'description' => '', 'parent' => null, 'slug' => '', ];
+        $defaults = ['description' => '', 'parent' => null, 'slug' => '',];
 
-        $args = array_merge( $defaults, $args );
+        $args = array_merge($defaults, $args);
 
-        $name = e( $args[ 'name' ] );
-        $description = e( $args[ 'description' ] );
+        $name = e($args[ 'name' ]);
+        $description = e($args[ 'description' ]);
 
         $args[ 'name' ] = $name;
         $args[ 'description' ] = $description;
 
-        if ( '' == trim( $name ) ) {
-            return new EtherError( 'Term name is required' );
+        if ('' == trim($name)) {
+            return new EtherError('Term name is required');
         }
 
-        if ( 0 == $args[ 'parent' ] ) {
+        if (0 == $args[ 'parent' ]) {
             $args[ 'parent' ] = null;
         }
 
-        if ( ( null != $args[ 'parent' ] ) && ! $this->termExists( (int)$args[ 'parent' ], $taxonomy ) ) {
-            return new EtherError( 'Term parent not exists' );
+        if ((null != $args[ 'parent' ]) && ! $this->termExists((int)$args[ 'parent' ], $taxonomy)) {
+            return new EtherError('Term parent not exists');
         }
 
 
-        if ( $args[ 'parent' ] == $term[ 'term_id' ] ) {
-            return new EtherError( 'Term parent cannot be the same term' );
+        if ($args[ 'parent' ] == $term[ 'term_id' ]) {
+            return new EtherError('Term parent cannot be the same term');
         }
 
-        if ( ! empty( trim( $args[ 'slug' ] ) ) ) {
-            if ( $args[ 'slug' ] == $term[ 'slug' ] ) {
-                unset( $args[ 'slug' ] );
+        if ( ! empty(trim($args[ 'slug' ]))) {
+            if ($args[ 'slug' ] == $term[ 'slug' ]) {
+                unset($args[ 'slug' ]);
             } else {
-                $args[ 'slug' ] = $this->termRepository->sluggableTerm( $args[ 'slug' ], $taxonomy );
+                $args[ 'slug' ] = $this->termRepository->sluggableTerm($args[ 'slug' ], $taxonomy);
             }
         } else {
-            unset( $args[ 'slug' ] );
+            unset($args[ 'slug' ]);
         }
 
-        if ( isset( $args[ 'id' ] ) ) {
-            unset( $args[ 'id' ] );
+        if (isset($args[ 'id' ])) {
+            unset($args[ 'id' ]);
         }
-        if ( isset( $args[ 'term_id' ] ) ) {
-            unset( $args[ 'term_id' ] );
+        if (isset($args[ 'term_id' ])) {
+            unset($args[ 'term_id' ]);
         }
 
-        $termUpdated = $this->termTaxonomyRepository->updateTermTaxonomy( $args, $term[ 'id' ] );
+        $termUpdated = $this->termTaxonomyRepository->updateTermTaxonomy($args, $term[ 'id' ]);
 
-        if ( $termUpdated ) {
+        if ($termUpdated) {
             return $termUpdated;
         }
 
-        Cache::tags( [ 'get_object_terms', 'get_hierarchical_terms', 'get_terms_by_taxonomy', 'taxonomy_ui_terms' ] )
+        Cache::tags(['get_object_terms', 'get_hierarchical_terms', 'get_terms_by_taxonomy', 'taxonomy_ui_terms'])
              ->flush();
     }
 
-    public function deleteTerm( $termId, $taxonomy )
+    public function deleteTerm($termId, $taxonomy)
     {
-        if ( ! $this->taxonomyExists( $taxonomy ) ) {
-            return new EtherError( 'Invalid taxonomy' );
+        if ( ! $this->taxonomyExists($taxonomy)) {
+            return new EtherError('Invalid taxonomy');
         }
 
-        $taxonomyObject = $this->getTaxonomy( $taxonomy );
+        $taxonomyObject = $this->getTaxonomy($taxonomy);
 
-        if ( $taxonomyObject->hierarchical ) {
-            $termTaxonomy = $this->termTaxonomyRepository->where( 'term_id', '=', $termId )
-                                                         ->where( 'taxonomy', '=', $taxonomy )->first();
-            if ( ! empty( $termTaxonomy ) ) {
+        if ($taxonomyObject->hierarchical) {
+            $termTaxonomy = $this->termTaxonomyRepository->where('term_id', '=', $termId)
+                                                         ->where('taxonomy', '=', $taxonomy)->first();
+            if ( ! empty($termTaxonomy)) {
                 $parent = $termTaxonomy->parent;
-                $termChildren = $this->termTaxonomyRepository->findWhere( [ 'parent' => $termTaxonomy->term_id ] );
+                $termChildren = $this->termTaxonomyRepository->findWhere(['parent' => $termTaxonomy->term_id]);
 
-                if ( ! empty( $termChildren ) ) {
-                    $childTtIds = array_pluck( $termChildren, 'id' );
-                    $this->termTaxonomyRepository->updateParents( $childTtIds, $parent );
+                if ( ! empty($termChildren)) {
+                    $childTtIds = array_pluck($termChildren, 'id');
+                    $this->termTaxonomyRepository->updateParents($childTtIds, $parent);
                 }
 
-                return $this->termTaxonomyRepository->delete( $termTaxonomy->id );
+                return $this->termTaxonomyRepository->delete($termTaxonomy->id);
 
             } else {
                 return 0;
             }
 
         } else {
-            $termTaxonomy = $this->termTaxonomyRepository->where( 'term_id', '=', $termId )
-                                                         ->where( 'taxonomy', '=', $taxonomy )->first();
-            if ( ! empty( $termTaxonomy ) ) {
-                return $this->termTaxonomyRepository->delete( $termTaxonomy->id );
+            $termTaxonomy = $this->termTaxonomyRepository->where('term_id', '=', $termId)
+                                                         ->where('taxonomy', '=', $taxonomy)->first();
+            if ( ! empty($termTaxonomy)) {
+                return $this->termTaxonomyRepository->delete($termTaxonomy->id);
             } else {
                 return 0;
             }
@@ -832,11 +884,11 @@ class Taxonomy
 
     }
 
-    public function removeObjectTerms( $objectId, $termIds, $taxonomy = null )
+    public function removeObjectTerms($objectId, $termIds, $taxonomy = null)
     {
-        Cache::tags( 'taxonomies' )->flush();
+        Cache::tags('taxonomies')->flush();
 
-        return $this->objectRepository->removePostTerms( $objectId, $termIds, $taxonomy );
+        return $this->objectRepository->removePostTerms($objectId, $termIds, $taxonomy);
     }
 
 

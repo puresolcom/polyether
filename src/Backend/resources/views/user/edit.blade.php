@@ -16,12 +16,20 @@
                         <h3>User Information</h3>
 
                         {!! BootForm::text('user[username]', 'Username', $user->username ,['id' => 'username', 'disabled'=> 'disabled']) !!}
-                        {!! BootForm::text('user[first_name]', 'First Name', $user->first_name ,['id' => 'first_name']) !!}
-                        {!! BootForm::text('user[last_name]', 'Last Name', $user->last_name ,['id' => 'last_name']) !!}
+                        {!! BootForm::text('user[first_name]', 'First Name', $user->first_name ,['id' => 'first_name', 'required' => 'required']) !!}
+                        {!! BootForm::text('user[last_name]', 'Last Name', $user->last_name ,['id' => 'last_name', 'required' => 'required']) !!}
 
                         <h3>Contact Information</h3>
                         {!! BootForm::text('user[email]', 'E-Mail', $user->email ,['id' => 'user_email', 'required' =>'required']) !!}
-                        {!! BootForm::text('usermeta[website]', 'Website', Meta::get('user', $user->id, 'website', true) ,['id' => 'last_name']) !!}
+
+                        <h3>User status</h3>
+
+                        <div class="checkbox icheck">
+                            <label>
+                                <input type="checkbox" name="user[enabled]"
+                                       value="1" {!! $user->enabled ? 'checked="checked"' : '' !!}> Enabled
+                            </label>
+                        </div>
 
                     </div>
                     <!-- /.box-body -->

@@ -29,7 +29,14 @@ Route::group(['middleware' => ['web'], 'namespace' => 'Polyether\Backend\Http\Co
         ]);
         Route::get('user/edit/{user_id}', ['as' => 'user_edit', 'uses' => 'Backend\UserController@getEdit']);
         Route::put('user/edit/{user_id}', ['as' => 'user_editPut', 'uses' => 'Backend\UserController@putEdit']);
-
+        Route::get('user/new', [
+            'as'   => 'user_create',
+            'uses' => 'Backend\UserController@getCreate',
+        ]);
+        Route::post('user/new', [
+            'as'   => 'user_createPost',
+            'uses' => 'Backend\UserController@postCreate',
+        ]);
 
         Route::post('taxonomy/ajax/{taxonomy_name}/datatables_data', [
             'as'   => 'taxonomy_datatables_resultPost',

@@ -23,7 +23,8 @@
       "Polyether\\": "src/"
     },
     "files": [
-      "src/Support/helpers.php"
+      "src/Support/helpers.php",
+      "src/Support/formatting.php"
     ]
   },
   "minimum-stability": "dev"

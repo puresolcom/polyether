@@ -5,6 +5,7 @@ namespace Polyether\Backend\Http\Controllers\Backend;
 use Auth;
 use Plugin;
 use Polyether\Support\DataTable;
+use Polyether\Support\EtherError;
 use Polyether\User\Repositories\UserRepository;
 use Request;
 use UserGate;
@@ -100,6 +101,34 @@ class UserController extends BackendController
         return $dataTables->make(true);
     }
 
+    public function getCreate()
+    {
+        $data[ 'header_title' ] = 'Users';
+        $data[ 'title' ] = 'New user';
+
+        return view('backend::user.create', $data);
+    }
+
+    public function postCreate()
+    {
+
+        $userData = Request::get('user');
+
+        if ( ! empty($userData)) {
+            if (isset($userData[ 'enabled' ])) {
+                $userData[ 'enabled' ] = 1;
+            } else {
+                $userData[ 'enabled' ] = 0;
+            }
+            $user = UserGate::create($userData);
+            if ($user instanceof EtherError) {
+                return redirect(route('user_create'))->withInput()->withErrors($user);
+            }
+        }
+
+        return redirect(route('user_create'))->with('success', 'User Created successfully');
+    }
+
     public function postAjaxDeleteUser()
     {
         if (Request::ajax() && Request::has(['user_id'])) {
@@ -136,18 +165,6 @@ class UserController extends BackendController
         $data[ 'header_title' ] = 'Users';
         $data[ 'user' ] = $user;
 
-        Plugin::add_action('ether_backend_foot', function () {
-            echo '<script type="text/javascript">
-                        $(function () {
-                            $(\'#user_created_at_date\').datetimepicker(
-                                    {
-                                        "format": "YYYY-MM-DD HH:mm:ss",
-                                    }
-                            );
-                        });
-                    </script>';
-        }, 1501);
-
         return view('backend::user.edit', $data);
     }
 
@@ -156,6 +173,13 @@ class UserController extends BackendController
         $userData = Request::get('user');
 
         if ( ! empty($userData)) {
+
+            if (isset($userData[ 'enabled' ])) {
+                $userData[ 'enabled' ] = 1;
+            } else {
+                $userData[ 'enabled' ] = 0;
+            }
+
             $userUpdate = UserGate::update($userId, $userData);
             if ($userUpdate instanceof EtherError) {
                 return redirect(route('user_edit', $userId))->withErrors($userUpdate);

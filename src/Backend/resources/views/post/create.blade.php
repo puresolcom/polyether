@@ -8,7 +8,7 @@
             <div class="col-lg-9 col-md-8 col-sm-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Edit {{ ucfirst($postTypeObject->name) }}</h3>
+                        <h3 class="box-title">{{$title}}</h3>
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->

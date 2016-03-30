@@ -6,7 +6,7 @@
     });
 
     window.checkBox = function () {
-        $('input[type=checkbox]').iCheck({
+        $('.icheck input[type=checkbox]').iCheck({
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue'
         });

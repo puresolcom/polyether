@@ -67,3 +67,37 @@ function degrade($entity)
     return (array)$entity;
 
 }
+
+function isJSON($string)
+{
+    return is_string($string) && is_array(json_decode($string,
+        true)) && (json_last_error() == JSON_ERROR_NONE) ? true : false;
+}
+
+function jsonizeMaybe($value)
+{
+    if (is_array($value) || is_object($value)) {
+        return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
+
+    return $value;
+}
+
+function unjsonizeMaybe($original)
+{
+    if (isJSON($original)) {
+        return json_decode($original);
+    }
+
+    return $original;
+}
+
+function se($value)
+{
+
+    if (is_string($value)) {
+        return e($value);
+    }
+
+    return $value;
+}

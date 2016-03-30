@@ -184,7 +184,7 @@ class PostTypeController extends BackendController
         return view('backend::post.create', $data);
     }
 
-    public function postCreate($postId)
+    public function postCreate($postType)
     {
 
         $postData = Request::get('post');
@@ -195,10 +195,10 @@ class PostTypeController extends BackendController
         if ( ! empty($postData)) {
             $post = Post::create($postData);
             if ($post instanceof EtherError) {
-                return redirect(route('post_create', $postId))->withInput()->withErrors($post);
+                return redirect(route('post_create', $postType))->withInput()->withErrors($post);
             }
 
-            $postId = $post->id;
+            $postId = (int)$post->id;
         }
 
         if (isset($taxonomies)) {

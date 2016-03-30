@@ -74,11 +74,7 @@ class OptionAPI
             }
         }
 
-        if ($this->isJSON($value)) {
-            return json_decode($value);
-        }
-
-        return $value;
+        return unjsonizeMaybe($value);
     }
 
     protected function getCached($name)
@@ -89,12 +85,6 @@ class OptionAPI
     protected function cache($name, $value)
     {
         $this->cached[ $name ] = $value;
-    }
-
-    public function isJSON($string)
-    {
-        return is_string($string) && is_array(json_decode($string,
-            true)) && (json_last_error() == JSON_ERROR_NONE) ? true : false;
     }
 
     public function set($name, $value, $autoload = 'yes')
@@ -108,9 +98,7 @@ class OptionAPI
             $autoload = 'no';
         }
 
-        if (is_array($value) || is_object($value)) {
-            $value = json_encode($value, JSON_UNESCAPED_UNICODE);
-        }
+        $value = jsonizeMaybe($value);
 
         if ($this->option->create(['option_name' => $name, 'option_value' => $value, 'autoload' => $autoload])) {
 
@@ -135,11 +123,7 @@ class OptionAPI
             $autoload = 'no';
         }
 
-        if (is_array($value) || is_object($value)) {
-            $value = json_encode($value, JSON_UNESCAPED_UNICODE);
-        }
-
-
+        $value = jsonizeMaybe($value);
         $updated_options = ['option_name' => $name, 'option_value' => $value];
 
         if ($autoload !== null) {

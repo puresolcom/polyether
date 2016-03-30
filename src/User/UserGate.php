@@ -4,7 +4,9 @@ namespace Polyether\User;
 
 use Backend;
 use Cache;
+use Polyether\Support\EtherError;
 use Polyether\User\Repositories\UserRepository;
+use Validator;
 
 class UserGate
 {
@@ -39,6 +41,20 @@ class UserGate
 
     public function create($userArr)
     {
+        $validator = Validator::make($userArr, [
+            'first_name' => 'required|min:3|max:255',
+            'last_name'  => 'required|min:3|max:255',
+            'username'   => 'required|min:3|max:32|unique:users',
+            'email'      => 'required|email|max:255|unique:users',
+            'password'   => 'required|min:6|max:64',
+        ]);
+
+        if ($validator->fails()) {
+            return new EtherError($validator->getMessageBag()->getMessages());
+        }
+
+        $userArr[ 'password' ] = bcrypt($userArr[ 'password' ]);
+
         return $this->userRepository->create($userArr);
     }
 
@@ -62,12 +78,20 @@ class UserGate
             $icon = 'fa fa-user';
 
             $parent_slug = Backend::registerMenuPage($slug, $title, $permissions, $link, $icon, 20);
+
+            if ($parent_slug) {
+                $singularName = 'User';
+                $title = 'Add new ' . $singularName;
+                $link = route('user_create');
+                $icon = 'fa fa-plus';
+                Backend::registerMenuSubPage($parent_slug . '_add', $parent_slug, $title, [], $link, $icon);
+            }
         });
     }
 
     public function update($userId, $userArr)
     {
-        $allowOnly = ['first_name', 'last_name', 'email', 'status'];
+        $allowOnly = ['first_name', 'last_name', 'email', 'enabled'];
         $userArr = array_intersect_key($userArr, array_flip($allowOnly));
 
         try {

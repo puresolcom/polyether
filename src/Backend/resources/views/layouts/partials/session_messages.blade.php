@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         @if (is_array(Request::session()->get('success')))
             @foreach(Request::session()->get('success') as $message)
-                {!! $message !!}
+                <li>{!! $message !!}</li>
             @endforeach
         @else
             {!! Request::session()->get('success') !!}
@@ -16,7 +16,7 @@
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         @if (is_array(Request::session()->get('error')))
             @foreach(Request::session()->get('error') as $message)
-                {!! $message !!}
+                <li>{!! $message !!}</li>
             @endforeach
         @else
             {!! Request::session()->get('error') !!}
@@ -30,7 +30,7 @@
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         @if (is_array($errors->all()))
             @foreach($errors->all() as $message)
-                {!! $message !!}
+                <li>{!! $message !!}</li>
             @endforeach
         @else
             {!! $errors !!}

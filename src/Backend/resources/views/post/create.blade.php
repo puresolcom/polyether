@@ -79,7 +79,7 @@
                         @if ($taxObj->hierarchical)
                             <div class="box-footer">
                                 <h5 class="toggle-add-taxonomy-term"><a href="#"><i class="fa fa-plus-circle"></i>
-                                        Add {{ ucfirst($taxName) }}</a></h5>
+                                        Add {{ $taxObj->labels['singular'] or ucfirst($taxName) }}</a></h5>
                                 <div class="add-taxonomy-term-wrapper" style="display: none;">
                                     <div class="form-group">
                                         <input type="text" name="new{{$taxName}}" data-required="true"

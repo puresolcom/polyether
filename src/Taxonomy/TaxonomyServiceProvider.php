@@ -39,7 +39,7 @@ class TaxonomyServiceProvider extends ServiceProvider
 
             $response = [];
 
-            if (count($term) == 3) {
+            if (count($term) > 1) {
                 $termKeys = array_keys($term);
                 $termValues = array_values($term);
 
@@ -47,7 +47,7 @@ class TaxonomyServiceProvider extends ServiceProvider
                 $taxObj = $this->app->make('Taxonomy')->getTaxonomy($taxName);
                 $termName = $termValues[ 0 ];
                 $termParent = (0 != $termValues[ 1 ]) ? (int)$termValues[ 1 ] : null;
-                $postId = $termValues[ 2 ];
+                $postId = isset($termValues[ 2 ]) ? $termValues[ 2 ] : 0;
 
 
                 $createdTerm = $this->app->make('Taxonomy')->createTerm($termName, $taxName, ['parent' => $termParent]);
@@ -55,7 +55,6 @@ class TaxonomyServiceProvider extends ServiceProvider
                     $result[ 'replaces' ][ $taxName . '_parent_select' ] = View::make('backend::post.taxonomy-parent-select',
                         [
                             'taxName' => $taxName,
-                            'postId'  => $postId,
                             'taxObj'  => $taxObj,
                         ])->render();
 

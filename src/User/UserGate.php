@@ -77,7 +77,7 @@ class UserGate
             $link = route('user_manage');
             $icon = 'fa fa-user';
 
-            $parent_slug = Backend::registerMenuPage($slug, $title, $permissions, $link, $icon, 20);
+            $parent_slug = Backend::registerMenuPage($slug, $title, $permissions, $link, $icon, 21);
 
             if ($parent_slug) {
                 $singularName = 'User';

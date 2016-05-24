@@ -28,7 +28,7 @@ class PostTypeController extends BackendController
         $postType = Post::getPostTypeObject($postType);
 
         if ($postType) {
-            $perm = '*_' . str_plural($postType->name);
+            $perm = ! empty($postType->permissions[ 'view_posts' ]) ? $postType->permissions[ 'view_posts' ] : '';
             if ( ! Auth::user()->can($perm)) {
                 abort(403);
             }
@@ -111,6 +111,7 @@ class PostTypeController extends BackendController
         $data[ 'postId' ] = $post->id;
 
         Plugin::add_action('ether_backend_foot', function () {
+
             echo '<script type="text/javascript">
                         $(function () {
                             $(\'#post_created_at_date\').datetimepicker(
@@ -239,7 +240,9 @@ class PostTypeController extends BackendController
             abort(400);
         }
 
-        if ( ! Auth::user()->can('*_' . str_plural($postType->name))) {
+        $perm = ! empty($postType->permissions[ 'view_posts' ]) ? $postType->permissions[ 'view_posts' ] : '';
+
+        if ( ! Auth::user()->can($perm)) {
             abort(403);
         }
 
@@ -249,18 +252,25 @@ class PostTypeController extends BackendController
             'query'   => [['column' => 'post_type', 'value' => e($postType->name),],],
         ];
 
+        if ( ! Auth::user()->hasRole('administrator')) {
+            $args[ 'query' ][] = ['column' => 'post_author', 'value' => Auth::user()->id];
+        }
+
         $dataTables = $this->postRepository->dataTable($args);
 
         $dataTables->addColumn('actions', function ($post) use ($postType) {
 
+            $edit_perm = ! empty($postType->permissions[ 'edit_posts' ]) ? $postType->permissions[ 'edit_posts' ] : '';
+            $delete_perm = ! empty($postType->permissions[ 'delete_posts' ]) ? $postType->permissions[ 'delete_posts' ] : '';
+
             $output = '<div class="datatable-actions">';
 
-            if (Auth::user()->can('edit_' . str_plural($postType->name))) {
+            if (Auth::user()->can($edit_perm)) {
                 $output .= '<a href="' . route('post_edit',
                         $post->id) . '" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
             }
 
-            if (Auth::user()->can('delete_' . str_plural($postType->name))) {
+            if (Auth::user()->can($delete_perm)) {
                 $output .= '<button class="delete-term-btn btn btn-xs btn-danger" data-post-id="' . $post->id . '"><i class="glyphicon glyphicon-remove"></i> Delete</button>';
             }
 

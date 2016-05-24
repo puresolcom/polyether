@@ -839,11 +839,13 @@ class Taxonomy
         $termUpdated = $this->termTaxonomyRepository->updateTermTaxonomy($args, $term[ 'id' ]);
 
         if ($termUpdated) {
+            Cache::tags(['taxonomies'])->flush();
+
             return $termUpdated;
         }
 
-        Cache::tags(['get_object_terms', 'get_hierarchical_terms', 'get_terms_by_taxonomy', 'taxonomy_ui_terms'])
-             ->flush();
+        return false;
+
     }
 
     public function deleteTerm($termId, $taxonomy)
@@ -866,6 +868,8 @@ class Taxonomy
                     $this->termTaxonomyRepository->updateParents($childTtIds, $parent);
                 }
 
+                Cache::tags('taxonomies')->flush();
+
                 return $this->termTaxonomyRepository->delete($termTaxonomy->id);
 
             } else {
@@ -876,6 +880,9 @@ class Taxonomy
             $termTaxonomy = $this->termTaxonomyRepository->where('term_id', '=', $termId)
                                                          ->where('taxonomy', '=', $taxonomy)->first();
             if ( ! empty($termTaxonomy)) {
+
+                Cache::tags('taxonomies')->flush();
+
                 return $this->termTaxonomyRepository->delete($termTaxonomy->id);
             } else {
                 return 0;

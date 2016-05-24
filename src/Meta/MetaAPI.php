@@ -276,6 +276,91 @@ class MetaAPI
         return $cache;
     }
 
+    public function updateByMid($metaType, $metaId, $metaValue, $metaKey = false)
+    {
+        if ( ! $metaType || ! is_numeric($metaId)) {
+            return false;
+        }
+
+        $metaId = abs((int)$metaId);
+
+        if ( ! $metaId) {
+            return false;
+        }
+
+        if ( ! $repositoryClassInstance = $this->metaRepoExists($metaType)) {
+            return false;
+        }
+
+        $column = sanitizeKey($metaType . '_id');
+
+        if ($meta = $this->getByMid($metaType, $metaId)) {
+            $originalKey = $meta->meta_key;
+            $objectId = $meta->{$column};
+
+            if (false === $metaKey) {
+                $metaKey = $originalKey;
+            } elseif ( ! is_string($metaKey)) {
+                return false;
+            }
+
+            $_metaValue = $metaValue;
+            $metaValue = jsonizeMaybe($metaValue);
+
+            $data = [
+                'meta_key'   => $metaKey,
+                'meta_value' => $metaValue,
+            ];
+
+            $where = ['id' => $metaId];
+
+            Plugin::do_action("update_{$metaType}_meta", $metaId, $objectId, $metaKey, $_metaValue);
+
+            $result = $this->{$repositoryClassInstance}->updateWhere($data, $where);
+
+            if ( ! $result) {
+                return false;
+            }
+
+            Cache::tags(["{$metaType}_meta"])->forget($objectId);
+
+            Plugin::do_action("updated_{$metaType}_meta", $metaId, $objectId, $metaKey, $_metaValue);
+
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public function getByMid($metaType, $metaId)
+    {
+        if ( ! $metaType || ! is_numeric($metaId)) {
+            return false;
+        }
+
+        $metaId = abs((int)$metaId);
+        if ( ! $metaId) {
+            return false;
+        }
+
+        if ( ! $repositoryClassInstance = $this->metaRepoExists($metaType)) {
+            return false;
+        }
+
+        $meta = $this->{$repositoryClassInstance}->find($metaId);
+
+        if ( ! count($meta)) {
+            return false;
+        }
+
+        if (isset($meta->meta_value)) {
+            $meta->meta_value = unjsonizeMaybe($meta->meta_value);
+        }
+
+        return $meta;
+    }
+
     public function delete($metaType, $objectId, $metaKey, $metaValue = '', $deleteAll = false)
     {
         if ( ! $metaType || ! $metaKey || ! is_numeric($objectId) && ! $deleteAll) {
@@ -346,6 +431,72 @@ class MetaAPI
         Plugin::do_action("deleted_{$metaType}_meta", $metaIds, $objectId, $metaKey, $_metaValue);
 
         return true;
+    }
+
+    public function deleteByMid($metaType, $metaId)
+    {
+        if ( ! $metaType || ! is_numeric($metaId)) {
+            return false;
+        }
+
+        $metaId = abs((int)$metaId);
+        if ( ! $metaId) {
+            return false;
+        }
+
+        if ( ! $repositoryClassInstance = $this->metaRepoExists($metaType)) {
+            return false;
+        }
+
+        $column = sanitizeKey($metaType . '_id');
+
+        if ($meta = $this->getByMid($metaType, $metaId)) {
+            $objectId = $meta->{$column};
+
+            Plugin::do_action("delete_{$metaType}_meta", (array)$metaId, $objectId, $meta->meta_key, $meta->meta_value);
+
+            $delete = (bool)$this->{$repositoryClassInstance}->delete($metaId);
+
+            Cache::tags(["{$metaType}_meta"])->forget($objectId);
+
+            Plugin::do_action("deleted_{$metaType}_meta", (array)$metaId, $objectId, $meta->meta_key,
+                $meta->meta_value);
+
+
+            return $delete;
+        }
+
+        return false;
+    }
+
+    public function exists($metaType, $objectId, $metaKey)
+    {
+        if ( ! $metaType || ! is_numeric($objectId)) {
+            return false;
+        }
+
+        $objectId = abs((int)$objectId);
+        if ( ! $objectId) {
+            return false;
+        }
+
+        $check = Plugin::apply_filters("get_{$metaType}_metadata", null, $objectId, $metaKey, true);
+        if (null !== $check) {
+            return (bool)$check;
+        }
+
+        $meta_cache = wp_cache_get($objectId, $metaType . '_meta');
+
+        if ( ! $meta_cache) {
+            $metaCache = Cache::tags(["{$metaType}_meta"])->get($objectId, false);
+            $metaCache = $metaCache[ $objectId ];
+        }
+
+        if (isset($metaCache[ $metaKey ])) {
+            return true;
+        }
+
+        return false;
     }
 
 }

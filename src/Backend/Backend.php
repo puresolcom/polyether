@@ -49,11 +49,11 @@ class Backend
             Asset::container('backend_header')->add('select2-css', 'vendor/backend/plugins/select2/select2.min.css');
             Asset::container('backend_header')->add('backend-css', 'vendor/backend/css/backend-adminlte.css');
             Asset::container('backend_header')->add('font-awesome-css',
-                    'https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
-            Asset::container('backend_header')
-                 ->add('ionicons-css', 'https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
+                'https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+            //            Asset::container('backend_header')
+            //                 ->add('ionicons-css', 'https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
             Asset::container('backend_header')->add('bootstrap-datetimepicker-css',
-                    'vendor/backend/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css');
+                'vendor/backend/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css');
             Asset::container('backend_header')->add('backend-styles-css', 'vendor/backend/css/backend-styles.css');
         }, 2);
 
@@ -73,10 +73,10 @@ class Backend
             Asset::container('backend_footer')
                  ->add('moment-js', 'vendor/backend/plugins/moment/moment-with-locales.min.js', 'jquery');
             Asset::container('backend_footer')->add('bootstrap-datetimepicker-js',
-                    'vendor/backend/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js', [
-                        'jquery',
-                        'moment-js',
-                    ]);
+                'vendor/backend/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js', [
+                    'jquery',
+                    'moment-js',
+                ]);
         }, 2);
     }
 
@@ -283,13 +283,6 @@ class Backend
 
     public function renderContentEditor($name, $label = null, $value = null, $options = array())
     {
-
-        Plugin::add_action('ether_backend_head', function () {
-            //            Asset::container( 'backend_header' )
-            //                 ->add( 'froala-editor-css', 'vendor/backend/plugins/froala_editor/css/froala_editor.min.css' );
-
-        }, 3);
-
         Plugin::add_action('ether_backend_foot', function () {
             Asset::container('backend_footer')
                  ->add('ckeditor-js', asset('vendor/backend/plugins/ckeditor/ckeditor.js'), [

@@ -19,6 +19,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
     protected $middleware = [];
     protected $routeMiddleware = [];
     protected $publishViews = true;
+    protected $publishConfig = true;
 
     public function boot()
     {
@@ -71,8 +72,9 @@ abstract class ModuleServiceProvider extends ServiceProvider
     protected function publishConfig()
     {
         foreach ($this->configs as $config => $alias) {
-
-            $this->publishes([$this->packagePath . 'config/' . $config . '.php' => config_path($config . '.php'),]);
+            if ($this->publishConfig) {
+                $this->publishes([$this->packagePath . 'config/' . $config . '.php' => config_path($config . '.php'),]);
+            }
         }
     }
 

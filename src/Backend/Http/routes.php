@@ -1,5 +1,9 @@
 <?php
 
+Route::any('test', function () {
+    dd(Meta::getByMid('user', 1));
+});
+
 Route::group(['middleware' => ['web'], 'namespace' => 'Polyether\Backend\Http\Controllers'], function () {
     // Authentication routes...
     Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);

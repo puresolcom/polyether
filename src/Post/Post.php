@@ -57,18 +57,16 @@ class Post
             'hierarchical'  => false,
             'show_ui'       => true,
             'icon'          => 'fa fa-pencil',
-            'menu_position' => 2,
-            'permissions'   => ['*_posts'],
+            'menu_position' => 10,
             '_built_in'     => true,
         ]);
 
         $this->registerPostType('page', [
             'labels'        => ['name' => 'Pages', 'singular' => 'Page',],
-            'permissions'   => ['*_pages'],
             'hierarchical'  => true,
             'show_ui'       => true,
             'icon'          => 'fa fa-file',
-            'menu_position' => 3,
+            'menu_position' => 11,
             '_built_in'     => true,
         ]);
     }
@@ -103,7 +101,12 @@ class Post
             'icon'               => null,
             'hierarchical'       => false,
             'taxonomies'         => [],
-            'permissions'        => [],
+            'permissions'        => [
+                'view_posts'   => 'view_posts',
+                'create_posts' => 'create_posts',
+                'edit_posts'   => 'edit_posts',
+                'delete_posts' => 'delete_posts',
+            ],
             'menu_position'      => null,
             '_built_in'          => false,
         ];
